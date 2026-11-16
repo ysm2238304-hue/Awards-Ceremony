@@ -2109,7 +2109,7 @@ function updateTopStats() {
   document.getElementById('statProxy').textContent = proxy;
 }
 
-function renderUnitCard(u, mode = 'checkin', idx = 0, showCatBadge = false) {
+function renderUnitCard(u, mode = 'checkin', idx = 0, showCatBadge = false, seqNum = null) {
   const cat = CATEGORIES[u.cat] || CATEGORIES.toilet;
   const st = STATUS_META[u.status] || STATUS_META.none;
   const rankClass = (u.rank || '').includes('特優') || (u.rank || '').includes('第一') ? 'tag-rank-top' : 'tag-rank-good';
@@ -2119,6 +2119,7 @@ function renderUnitCard(u, mode = 'checkin', idx = 0, showCatBadge = false) {
     return `
       <div class="done-compact-row pop-card" style="--i:${idx};">
         <div style="display:flex;align-items:center;gap:6px;min-width:0;">
+          ${seqNum ? `<span class="tag" style="background:#FEF08A;flex:0 0 auto;">#${seqNum}</span>` : ''}
           <span class="tag ${rankClass}" style="flex:0 0 auto;">${u.rank}</span>
           <span style="font-size:14px;font-weight:900;color:#CBD5E1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">🏆 ${u.name}</span>
         </div>
@@ -2222,6 +2223,7 @@ function renderUnitCard(u, mode = 'checkin', idx = 0, showCatBadge = false) {
       <div class="unit-top">
         <div>
           <div class="unit-badges">
+            ${(mode === 'usher' && seqNum) ? `<span class="tag" style="background:#FEF08A;">順序 #${seqNum}</span>` : ''}
             ${showCatBadge ? `<span class="tag" style="background:${cat.color};">${cat.icon} ${cat.name}</span>` : ''}
             <span class="tag ${rankClass}">${u.rank}</span>
             ${u.town ? `<span class="tag tag-town">📍 ${u.town}</span>` : ''}
@@ -2291,6 +2293,7 @@ function renderUsherView() {
       <div>
         <div style="font-size:14px;font-weight:900;color:${curCat.color};">${curCat.icon} ${curCat.name}｜負責：${curCat.lead}</div>
         <div style="font-size:12px;color:#CBD5E1;font-weight:700;">⏰ 頒獎時段：${curCat.time}</div>
+        <div style="font-size:11px;color:#FDE047;font-weight:800;margin-top:3px;">📜 排列順序即為「上台唱名與遞獎順序（#1→#2…）」</div>
       </div>
       <span class="tag" style="background:${curCat.color};">共 ${units.length} 名</span>
     </div>
@@ -2330,7 +2333,7 @@ function renderUsherView() {
           </div>
           ${batchBtnHtml}
         </div>
-        ${bUnits.map(u => renderUnitCard(u, 'usher', cardIdx++, false)).join('')}
+        ${bUnits.map((u, bIdx) => renderUnitCard(u, 'usher', cardIdx++, false, bIdx + 1)).join('')}
       `;
     }).join('')}
   `;
