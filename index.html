@@ -1075,7 +1075,7 @@
     <div id="checkinSearchBar" class="checkin-search-bar hidden">
       <div class="search-wrap">
         <input id="checkinSearchInput" class="search-input" type="search"
-          placeholder="🔍 搜尋單位名稱、鄉鎮、日管處、中油..."
+          placeholder="🔍 搜尋單位名稱、受獎代表姓名、鄉鎮..."
           oninput="handleSearchInput(this.value)" />
         <button id="checkinSearchClear" class="search-clear" style="display:none;" onclick="clearSearchInput()">✕</button>
       </div>
@@ -1102,8 +1102,13 @@
       </div>
 
       <div class="form-group">
-        <label class="form-label">代領人 / 現場代表姓名與備註（舞台與主持人會看到）</label>
-        <input id="editNoteInput" class="form-control" type="text" placeholder="例如：由日管處科長統一代表領獎" />
+        <label class="form-label">👤 受獎代表姓名／職稱（引導組畫面顯示，可隨時補登修改）</label>
+        <input id="editRepInput" class="form-control" type="text" placeholder="例如：王小明 / 科長" />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">💬 現場備註（舞台與主持人異動看板會顯示）</label>
+        <input id="editNoteInput" class="form-control" type="text" placeholder="例如：改由副處長代領、已先到舞台側邊等候" />
       </div>
 
       <div class="form-group">
@@ -1251,54 +1256,107 @@ const STATUS_META = {
 };
 
 const DEFAULT_UNITS = [
-  // === 1. 績優公廁 (9名 - 依獎狀PDF順序) ===
-  { id: 't-1', cat: 'toilet', batch: '第1組｜整潔美觀組（3名）', rank: '特優', town: '南投市', org: '交通部高速公路局中區養護工程分局', name: '南投服務區北棟及南棟公廁' },
-  { id: 't-2', cat: 'toilet', batch: '第1組｜整潔美觀組（3名）', rank: '優等', town: '水里鄉', org: '交通部觀光署日月潭國家風景區管理處', name: '車埕管理站-車埕鐵道觀光小學堂公廁' },
-  { id: 't-3', cat: 'toilet', batch: '第1組｜整潔美觀組（3名）', rank: '優等', town: '魚池鄉', org: '交通部觀光署日月潭國家風景區管理處', name: '向山遊客中心公廁' },
+  // === 1. 績優公廁 (9名) ===
+  { id: 't-1', cat: 'toilet', batch: '第1組｜整潔美觀組（3名）', rank: '特優', town: '南投市', org: '交通部高速公路局中區養護工程分局', name: '南投服務區北棟及南棟公廁', rep: '呈核中（週一追蹤）', multi: '' },
+  { id: 't-2', cat: 'toilet', batch: '第1組｜整潔美觀組（3名）', rank: '優等', town: '水里鄉', org: '交通部觀光署日月潭國家風景區管理處-車埕管理站', name: '車埕鐵道觀光小學堂 1F 公廁', rep: '涂振昇 / 秘書', multi: '日管處連領4獎' },
+  { id: 't-3', cat: 'toilet', batch: '第1組｜整潔美觀組（3名）', rank: '優等', town: '魚池鄉', org: '交通部觀光署日月潭國家風景區管理處', name: '向山遊客中心公廁', rep: '涂振昇 / 秘書', multi: '日管處連領4獎' },
 
-  { id: 't-4', cat: 'toilet', batch: '第2組｜多元服務組（3名）', rank: '特優', town: '埔里鎮', org: '台灣中油股份有限公司油品行銷事業部台中營業處', name: '台灣中油-埔里站公廁' },
-  { id: 't-5', cat: 'toilet', batch: '第2組｜多元服務組（3名）', rank: '優等', town: '魚池鄉', org: '交通部觀光署日月潭國家風景區管理處', name: '伊達邵遊客中心公廁' },
-  { id: 't-6', cat: 'toilet', batch: '第2組｜多元服務組（3名）', rank: '優等', town: '魚池鄉', org: '交通部觀光署日月潭國家風景區管理處', name: '埔里管理站-朝霧碼頭公廁' },
+  { id: 't-4', cat: 'toilet', batch: '第2組｜多元服務組（3名）', rank: '特優', town: '埔里鎮', org: '台灣中油股份有限公司-埔里加油站', name: '台灣中油埔里站公廁', rep: '戴哲夫 / 站長', multi: '' },
+  { id: 't-5', cat: 'toilet', batch: '第2組｜多元服務組（3名）', rank: '優等', town: '魚池鄉', org: '交通部觀光署日月潭國家風景區管理處', name: '伊達邵遊客中心公廁', rep: '涂振昇 / 秘書', multi: '日管處連領4獎' },
+  { id: 't-6', cat: 'toilet', batch: '第2組｜多元服務組（3名）', rank: '優等', town: '魚池鄉', org: '交通部觀光署日月潭國家風景區管理處-埔里管理站', name: '朝霧碼頭公廁', rep: '涂振昇 / 秘書', multi: '日管處連領4獎' },
 
-  { id: 't-7', cat: 'toilet', batch: '第3組｜公共設施組（3名）', rank: '特優', town: '名間鄉', org: '交通部觀光署參山國家風景區管理處', name: '松柏嶺遊客中心公廁' },
-  { id: 't-8', cat: 'toilet', batch: '第3組｜公共設施組（3名）', rank: '優等', town: '竹山鎮', org: '杉林溪遊樂事業股份有限公司', name: '杉林溪紅樓公廁' },
-  { id: 't-9', cat: 'toilet', batch: '第3組｜公共設施組（3名）', rank: '優等', town: '集集鎮', org: '農業部生物多樣性研究所', name: '保育教育館1F公廁' },
+  { id: 't-7', cat: 'toilet', batch: '第3組｜公共設施組（3名）', rank: '特優', town: '名間鄉', org: '交通部觀光署參山國家風景區管理處', name: '松柏嶺遊客中心公廁', rep: '廖錫標 / 副處長', multi: '' },
+  { id: 't-8', cat: 'toilet', batch: '第3組｜公共設施組（3名）', rank: '優等', town: '竹山鎮', org: '杉林溪遊樂事業股份有限公司', name: '杉林溪紅樓公廁', rep: '李侑璘 / 工務部經理', multi: '兼領綠色採購#12' },
+  { id: 't-9', cat: 'toilet', batch: '第3組｜公共設施組（3名）', rank: '優等', town: '集集鎮', org: '農業部生物多樣性研究所', name: '保育教育館 1F 公廁', rep: '承辦出差（週一追蹤）', multi: '' },
 
-  // === 2. 環境清潔考核 (15名 - 依獎狀PDF與典禮上台梯次排序) ===
-  { id: 'c-1',  cat: 'clean', batch: '第1批｜鄉鎮市公所第一組（2名）', rank: '第一名', town: '草屯鎮', org: '環境清潔考核・鄉鎮市公所第一組', name: '南投縣草屯鎮公所' },
-  { id: 'c-2',  cat: 'clean', batch: '第1批｜鄉鎮市公所第一組（2名）', rank: '第二名', town: '南投市', org: '環境清潔考核・鄉鎮市公所第一組', name: '南投縣南投市公所' },
+  // === 2. 環境清潔考核 (15名) ===
+  { id: 'c-1',  cat: 'clean', batch: '第1批｜鄉鎮市公所第一組（2名）', rank: '第一名', town: '草屯鎮', org: '環境清潔考核・鄉鎮市公所第一組', name: '南投縣草屯鎮公所', rep: '週一追蹤', multi: '' },
+  { id: 'c-2',  cat: 'clean', batch: '第1批｜鄉鎮市公所第一組（2名）', rank: '第二名', town: '南投市', org: '環境清潔考核・鄉鎮市公所第一組', name: '南投縣南投市公所', rep: '林晉毅 / 隊長', multi: '' },
 
-  { id: 'c-3',  cat: 'clean', batch: '第2批｜鄉鎮市公所第二組（3名）', rank: '第一名', town: '集集鎮', org: '環境清潔考核・鄉鎮市公所第二組', name: '南投縣集集鎮公所' },
-  { id: 'c-4',  cat: 'clean', batch: '第2批｜鄉鎮市公所第二組（3名）', rank: '第二名', town: '仁愛鄉', org: '環境清潔考核・鄉鎮市公所第二組', name: '南投縣仁愛鄉公所' },
-  { id: 'c-5',  cat: 'clean', batch: '第2批｜鄉鎮市公所第二組（3名）', rank: '第三名', town: '國姓鄉', org: '環境清潔考核・鄉鎮市公所第二組', name: '南投縣國姓鄉公所' },
+  { id: 'c-3',  cat: 'clean', batch: '第2批｜鄉鎮市公所第二組（3名）', rank: '第一名', town: '集集鎮', org: '環境清潔考核・鄉鎮市公所第二組', name: '南投縣集集鎮公所', rep: '黃承哲 / 隊長', multi: '' },
+  { id: 'c-4',  cat: 'clean', batch: '第2批｜鄉鎮市公所第二組（3名）', rank: '第二名', town: '仁愛鄉', org: '環境清潔考核・鄉鎮市公所第二組', name: '南投縣仁愛鄉公所', rep: '王智璇', multi: '' },
+  { id: 'c-5',  cat: 'clean', batch: '第2批｜鄉鎮市公所第二組（3名）', rank: '第三名', town: '國姓鄉', org: '環境清潔考核・鄉鎮市公所第二組', name: '南投縣國姓鄉公所', rep: '邱美玲 / 鄉長', multi: '兼貴賓身分' },
 
-  { id: 'c-6',  cat: 'clean', batch: '第3批｜村里社區 6-10名（5名・先上台）', rank: '第六名', town: '草屯鎮', org: '環境清潔考核・村(里)、社區組', name: '南投縣草屯鎮中山里' },
-  { id: 'c-7',  cat: 'clean', batch: '第3批｜村里社區 6-10名（5名・先上台）', rank: '第七名', town: '南投市', org: '環境清潔考核・村(里)、社區組', name: '南投縣南投市社團法人南投縣慈慧善行協會' },
-  { id: 'c-8',  cat: 'clean', batch: '第3批｜村里社區 6-10名（5名・先上台）', rank: '第八名', town: '集集鎮', org: '環境清潔考核・村(里)、社區組', name: '南投縣集集鎮集集社區發展協會' },
-  { id: 'c-9',  cat: 'clean', batch: '第3批｜村里社區 6-10名（5名・先上台）', rank: '第九名', town: '鹿谷鄉', org: '環境清潔考核・村(里)、社區組', name: '南投縣鹿谷鄉竹林村' },
-  { id: 'c-10', cat: 'clean', batch: '第3批｜村里社區 6-10名（5名・先上台）', rank: '第十名', town: '草屯鎮', org: '環境清潔考核・村(里)、社區組', name: '南投縣草屯鎮玉峰里' },
+  { id: 'c-6',  cat: 'clean', batch: '第3批｜村里社區 6-10名（5名・先上台）', rank: '第六名', town: '草屯鎮', org: '環境清潔考核・村(里)、社區組', name: '南投縣草屯鎮中山里', rep: '週一追蹤', multi: '' },
+  { id: 'c-7',  cat: 'clean', batch: '第3批｜村里社區 6-10名（5名・先上台）', rank: '第七名', town: '南投市', org: '環境清潔考核・村(里)、社區組', name: '南投縣南投市社團法人南投縣慈慧善行協會', rep: '洪玉琳 / 志工隊隊長', multi: '' },
+  { id: 'c-8',  cat: 'clean', batch: '第3批｜村里社區 6-10名（5名・先上台）', rank: '第八名', town: '集集鎮', org: '環境清潔考核・村(里)、社區組', name: '南投縣集集鎮集集社區發展協會', rep: '黃南珍 / 理事長', multi: '' },
+  { id: 'c-9',  cat: 'clean', batch: '第3批｜村里社區 6-10名（5名・先上台）', rank: '第九名', town: '鹿谷鄉', org: '環境清潔考核・村(里)、社區組', name: '南投縣鹿谷鄉竹林村', rep: '劉孟筑 / 清潔隊長', multi: '' },
+  { id: 'c-10', cat: 'clean', batch: '第3批｜村里社區 6-10名（5名・先上台）', rank: '第十名', town: '草屯鎮', org: '環境清潔考核・村(里)、社區組', name: '南投縣草屯鎮玉峰里', rep: '週一追蹤', multi: '' },
 
-  { id: 'c-11', cat: 'clean', batch: '第4批｜村里社區 1-5名（5名・後上台）', rank: '第一名', town: '仁愛鄉', org: '環境清潔考核・村(里)、社區組', name: '南投縣仁愛鄉大同村(壽亭新村)' },
-  { id: 'c-12', cat: 'clean', batch: '第4批｜村里社區 1-5名（5名・後上台）', rank: '第二名', town: '水里鄉', org: '環境清潔考核・村(里)、社區組', name: '南投縣水里鄉車埕村' },
-  { id: 'c-13', cat: 'clean', batch: '第4批｜村里社區 1-5名（5名・後上台）', rank: '第三名', town: '竹山鎮', org: '環境清潔考核・村(里)、社區組', name: '南投縣竹山鎮竹山里' },
-  { id: 'c-14', cat: 'clean', batch: '第4批｜村里社區 1-5名（5名・後上台）', rank: '第四名', town: '仁愛鄉', org: '環境清潔考核・村(里)、社區組', name: '南投縣仁愛鄉大同村(幼獅班道)' },
-  { id: 'c-15', cat: 'clean', batch: '第4批｜村里社區 1-5名（5名・後上台）', rank: '第五名', town: '魚池鄉', org: '環境清潔考核・村(里)、社區組', name: '南投縣魚池鄉澀水社區發展協會' },
+  { id: 'c-11', cat: 'clean', batch: '第4批｜村里社區 1-5名（5名・後上台）', rank: '第一名', town: '仁愛鄉', org: '環境清潔考核・村(里)、社區組', name: '南投縣仁愛鄉大同村(壽亭新村)', rep: '謝戎彥 / 村長', multi: '同梯連領2獎(#1/#4)' },
+  { id: 'c-12', cat: 'clean', batch: '第4批｜村里社區 1-5名（5名・後上台）', rank: '第二名', town: '水里鄉', org: '環境清潔考核・村(里)、社區組', name: '南投縣水里鄉車埕村', rep: '陳美璇 / 職代', multi: '' },
+  { id: 'c-13', cat: 'clean', batch: '第4批｜村里社區 1-5名（5名・後上台）', rank: '第三名', town: '竹山鎮', org: '環境清潔考核・村(里)、社區組', name: '南投縣竹山鎮竹山里', rep: '曾鈺琄 / 里長', multi: '' },
+  { id: 'c-14', cat: 'clean', batch: '第4批｜村里社區 1-5名（5名・後上台）', rank: '第四名', town: '仁愛鄉', org: '環境清潔考核・村(里)、社區組', name: '南投縣仁愛鄉大同村(幼獅道班)', rep: '謝戎彥 / 村長', multi: '同梯連領2獎(#1/#4)' },
+  { id: 'c-15', cat: 'clean', batch: '第4批｜村里社區 1-5名（5名・後上台）', rank: '第五名', town: '魚池鄉', org: '環境清潔考核・村(里)、社區組', name: '南投縣魚池鄉澀水社區發展協會', rep: '蘇吉正 / 理事長', multi: '' },
 
-  // === 3. 民間綠色採購 (15名) ===
-  ...Array.from({length: 8}, (_, i) => ({ id: `g-1-${i+1}`, cat: 'green', batch: '第1批｜申報超過100萬（8名）', rank: '績優', town: '', org: '民間綠色採購', name: `綠色採購績優單位 #${i+1}` })),
-  ...Array.from({length: 7}, (_, i) => ({ id: `g-2-${i+1}`, cat: 'green', batch: '第2批｜申報超過100萬（7名）', rank: '績優', town: '', org: '民間綠色採購', name: `綠色採購績優單位 #${i+9}` })),
+  // === 3. 民間綠色採購 (15名 - 第一次8名、第二次7名) ===
+  { id: 'g-1',  cat: 'green', batch: '第1批｜申報超過100萬（前8名）', rank: '績優 #1',  town: '', org: '114年民間綠色採購績優單位', name: '信織實業股份有限公司', rep: '葉光哲 / 經理', multi: '' },
+  { id: 'g-2',  cat: 'green', batch: '第1批｜申報超過100萬（前8名）', rank: '績優 #2',  town: '', org: '114年民間綠色採購績優單位', name: '南開科技大學', rep: '趙苡辰 / 專案助理', multi: '兼領室內空品#21' },
+  { id: 'g-3',  cat: 'green', batch: '第1批｜申報超過100萬（前8名）', rank: '績優 #3',  town: '', org: '114年民間綠色採購績優單位', name: '塔里星室內裝修工程有限公司', rep: '盧政憶 / 負責人', multi: '' },
+  { id: 'g-4',  cat: 'green', batch: '第1批｜申報超過100萬（前8名）', rank: '績優 #4',  town: '', org: '114年民間綠色採購績優單位', name: '双邦實業股份有限公司', rep: '何冠億 / 專員', multi: '' },
+  { id: 'g-5',  cat: 'green', batch: '第1批｜申報超過100萬（前8名）', rank: '績優 #5',  town: '', org: '114年民間綠色採購績優單位', name: '茂順密封元件科技股份有限公司', rep: '施澍澤 / 經理', multi: '' },
+  { id: 'g-6',  cat: 'green', batch: '第1批｜申報超過100萬（前8名）', rank: '績優 #6',  town: '', org: '114年民間綠色採購績優單位', name: '治鼎科技營造股份有限公司', rep: '劉謹銘 / 董事長', multi: '' },
+  { id: 'g-7',  cat: 'green', batch: '第1批｜申報超過100萬（前8名）', rank: '績優 #7',  town: '', org: '114年民間綠色採購績優單位', name: '祥峰電器行', rep: '游梨貞 / 老闆娘', multi: '' },
+  { id: 'g-8',  cat: 'green', batch: '第1批｜申報超過100萬（前8名）', rank: '績優 #8',  town: '', org: '114年民間綠色採購績優單位', name: '翌暘工程顧問有限公司', rep: '張旻潔 / 計畫經理', multi: '' },
 
-  // === 4. 優良機車排氣檢驗站 (10名) ===
-  ...Array.from({length: 3}, (_, i) => ({ id: `m-1-${i+1}`, cat: 'moto', batch: '第1批｜第一～三名（3名）', rank: `第${i+1}名`, town: '', org: '優良機車排氣檢驗站', name: `機車排氣檢驗站 #${i+1}` })),
-  ...Array.from({length: 2}, (_, i) => ({ id: `m-2-${i+1}`, cat: 'moto', batch: '第2批｜簡訊收集績優獎（2名）', rank: '績優', town: '', org: '簡訊收集績優獎', name: `簡訊收集績優站 #${i+1}` })),
-  ...Array.from({length: 5}, (_, i) => ({ id: `m-3-${i+1}`, cat: 'moto', batch: '第3批｜年度定檢率提升績優獎（5名）', rank: '績優', town: '', org: '定檢率提升績優獎', name: `定檢率提升績優站 #${i+1}` })),
+  { id: 'g-9',  cat: 'green', batch: '第2批｜申報超過100萬（後7名）', rank: '績優 #9',  town: '', org: '114年民間綠色採購績優單位', name: '雲品國際酒店股份有限公司日月潭分公司', rep: '張喬雯 / 採購部資深副理', multi: '' },
+  { id: 'g-10', cat: 'green', batch: '第2批｜申報超過100萬（後7名）', rank: '績優 #10', town: '', org: '114年民間綠色採購績優單位', name: '福杉國際旅館管理顧問股份有限公司', rep: '曾雅琪 / 經理', multi: '' },
+  { id: 'g-11', cat: 'green', batch: '第2批｜申報超過100萬（後7名）', rank: '績優 #11', town: '', org: '114年民間綠色採購績優單位', name: '三原電器行', rep: '陳韋助 / 老闆', multi: '' },
+  { id: 'g-12', cat: 'green', batch: '第2批｜申報超過100萬（後7名）', rank: '績優 #12', town: '', org: '114年民間綠色採購績優單位', name: '杉林溪遊樂事業股份有限公司', rep: '李侑璘 / 工務部經理', multi: '兼領績優公廁#8' },
+  { id: 'g-13', cat: 'green', batch: '第2批｜申報超過100萬（後7名）', rank: '績優 #13', town: '', org: '114年民間綠色採購績優單位', name: '佳信電器行', rep: '黃志宏 / 負責人', multi: '' },
+  { id: 'g-14', cat: 'green', batch: '第2批｜申報超過100萬（後7名）', rank: '績優 #14', town: '', org: '114年民間綠色採購績優單位', name: '佑民醫療社團法人佑民醫院', rep: '林翠紅 / 行政部副部長', multi: '' },
+  { id: 'g-15', cat: 'green', batch: '第2批｜申報超過100萬（後7名）', rank: '績優 #15', town: '', org: '114年民間綠色採購績優單位', name: '埔基醫療財團法人埔里基督教醫院', rep: '楊崇欣 / 主任', multi: '' },
 
-  // === 5. 室內空氣品質標章 (29名) ===
-  ...Array.from({length: 8}, (_, i) => ({ id: `q-1-${i+1}`, cat: 'iaq', batch: '第1批｜優良級（8名）', rank: '優良級', town: '', org: '室內空氣品質標章', name: `室內空品優良單位 #${i+1}` })),
-  ...Array.from({length: 8}, (_, i) => ({ id: `q-2-${i+1}`, cat: 'iaq', batch: '第2批｜優良級（8名）', rank: '優良級', town: '', org: '室內空氣品質標章', name: `室內空品優良單位 #${i+9}` })),
-  ...Array.from({length: 7}, (_, i) => ({ id: `q-3-${i+1}`, cat: 'iaq', batch: '第3批｜優良級（7名）', rank: '優良級', town: '', org: '室內空氣品質標章', name: `室內空品優良單位 #${i+17}` })),
-  ...Array.from({length: 6}, (_, i) => ({ id: `q-4-${i+1}`, cat: 'iaq', batch: '第4批｜良好級（6名）', rank: '良好級', town: '', org: '室內空氣品質標章', name: `室內空品良好單位 #${i+1}` }))
+  // === 4. 優良機車排氣檢驗站 (10名 - 3+2+5) ===
+  { id: 'm-1',  cat: 'moto', batch: '第1批｜第一～三名（3名）', rank: '第一名', town: '竹山鎮', org: '優良機車排氣檢驗站', name: '竹山鎮明昇機車行', rep: '張信法 / 老闆', multi: '' },
+  { id: 'm-2',  cat: 'moto', batch: '第1批｜第一～三名（3名）', rank: '第二名', town: '埔里鎮', org: '優良機車排氣檢驗站', name: '埔里鎮光隆車業', rep: '蔡旭洲 / 老闆', multi: '' },
+  { id: 'm-3',  cat: 'moto', batch: '第1批｜第一～三名（3名）', rank: '第三名', town: '竹山鎮', org: '優良機車排氣檢驗站', name: '竹山鎮信誼機車行', rep: '曾昱綸 / 小老闆', multi: '' },
+
+  { id: 'm-4',  cat: 'moto', batch: '第2批｜簡訊收集績優獎（2名）', rank: '簡訊績優', town: '國姓鄉', org: '簡訊收集績優獎', name: '國姓鄉長興機車行', rep: '何俊賢 / 老闆', multi: '' },
+  { id: 'm-5',  cat: 'moto', batch: '第2批｜簡訊收集績優獎（2名）', rank: '簡訊績優', town: '埔里鎮', org: '簡訊收集績優獎', name: '埔里鎮東岳機車行', rep: '王昱人 / 老闆', multi: '' },
+
+  { id: 'm-6',  cat: 'moto', batch: '第3批｜年度定檢率提升績優獎（5名）', rank: '定檢提升', town: '埔里鎮', org: '年度定檢率提升績優獎', name: '埔里鎮百盛機車行', rep: '游景化 / 老闆', multi: '' },
+  { id: 'm-7',  cat: 'moto', batch: '第3批｜年度定檢率提升績優獎（5名）', rank: '定檢提升', town: '埔里鎮', org: '年度定檢率提升績優獎', name: '埔里鎮永旺車業行', rep: '劉志永 / 老闆', multi: '' },
+  { id: 'm-8',  cat: 'moto', batch: '第3批｜年度定檢率提升績優獎（5名）', rank: '定檢提升', town: '埔里鎮', org: '年度定檢率提升績優獎', name: '埔里鎮宏城機車行', rep: '陳佳宏 / 老闆', multi: '' },
+  { id: 'm-9',  cat: 'moto', batch: '第3批｜年度定檢率提升績優獎（5名）', rank: '定檢提升', town: '南投市', org: '年度定檢率提升績優獎', name: '南投市勝美機車行', rep: '鄭偉志 / 老闆', multi: '' },
+  { id: 'm-10', cat: 'moto', batch: '第3批｜年度定檢率提升績優獎（5名）', rank: '定檢提升', town: '草屯鎮', org: '年度定檢率提升績優獎', name: '草屯鎮明利車業', rep: '張芳秋 / 老闆', multi: '' },
+
+  // === 5. 室內空氣品質自主管理標章 (29名 - 優良級8+8+7、良好級6) ===
+  { id: 'q-1',  cat: 'iaq', batch: '第1批｜優良級（第1～8名）', rank: '優良級 #1',  town: '', org: '室內空氣品質標章・優良級', name: '南投縣私立愛迪生幼兒園', rep: '主任或老師', multi: '' },
+  { id: 'q-2',  cat: 'iaq', batch: '第1批｜優良級（第1～8名）', rank: '優良級 #2',  town: '', org: '室內空氣品質標章・優良級', name: '南投縣私立聖愛幼兒園', rep: '主任或老師', multi: '' },
+  { id: 'q-3',  cat: 'iaq', batch: '第1批｜優良級（第1～8名）', rank: '優良級 #3',  town: '信義鄉', org: '室內空氣品質標章・優良級', name: '信義鄉同富國小附設幼兒園', rep: '主任或老師', multi: '' },
+  { id: 'q-4',  cat: 'iaq', batch: '第1批｜優良級（第1～8名）', rank: '優良級 #4',  town: '鹿谷鄉', org: '室內空氣品質標章・優良級', name: '鹿谷鄉文昌國小附設幼兒園', rep: '李岱恩 / 校長', multi: '' },
+  { id: 'q-5',  cat: 'iaq', batch: '第1批｜優良級（第1～8名）', rank: '優良級 #5',  town: '', org: '室內空氣品質標章・優良級', name: '南投縣私立福祿貝爾幼兒園', rep: '潘家宜 / 園長', multi: '' },
+  { id: 'q-6',  cat: 'iaq', batch: '第1批｜優良級（第1～8名）', rank: '優良級 #6',  town: '魚池鄉', org: '室內空氣品質標章・優良級', name: '魚池鄉魚池國小附設幼兒園', rep: '范美莉 / 主任', multi: '' },
+  { id: 'q-7',  cat: 'iaq', batch: '第1批｜優良級（第1～8名）', rank: '優良級 #7',  town: '信義鄉', org: '室內空氣品質標章・優良級', name: '信義鄉地利國小附設幼兒園', rep: '全主任', multi: '' },
+  { id: 'q-8',  cat: 'iaq', batch: '第1批｜優良級（第1～8名）', rank: '優良級 #8',  town: '', org: '室內空氣品質標章・優良級', name: '南投縣私立格林幼兒園', rep: '同事代表', multi: '' },
+
+  { id: 'q-9',  cat: 'iaq', batch: '第2批｜優良級（第9～16名）', rank: '優良級 #9',  town: '埔里鎮', org: '室內空氣品質標章・優良級', name: '埔里鎮忠孝國小附設幼兒園', rep: '鐘森雄 / 校長', multi: '' },
+  { id: 'q-10', cat: 'iaq', batch: '第2批｜優良級（第9～16名）', rank: '優良級 #10', town: '', org: '室內空氣品質標章・優良級', name: '南投縣私立育樂寶貝托嬰中心', rep: '廖偉琳 / 主任', multi: '' },
+  { id: 'q-11', cat: 'iaq', batch: '第2批｜優良級（第9～16名）', rank: '優良級 #11', town: '', org: '室內空氣品質標章・優良級', name: '國防部全動署後備指揮部明德營區職場互助教保服務中心', rep: '行政人員代表', multi: '' },
+  { id: 'q-12', cat: 'iaq', batch: '第2批｜優良級（第9～16名）', rank: '優良級 #12', town: '南投市', org: '室內空氣品質標章・優良級', name: '南投市新豐國小附設幼兒園', rep: '黃惠瑜 / 主任', multi: '' },
+  { id: 'q-13', cat: 'iaq', batch: '第2批｜優良級（第9～16名）', rank: '優良級 #13', town: '', org: '室內空氣品質標章・優良級', name: '南投縣迦南精神護理之家', rep: '工作人員', multi: '' },
+  { id: 'q-14', cat: 'iaq', batch: '第2批｜優良級（第9～16名）', rank: '優良級 #14', town: '埔里鎮', org: '室內空氣品質標章・優良級', name: '國立暨南國際大學', rep: '卓雨璇 / 小姐', multi: '' },
+  { id: 'q-15', cat: 'iaq', batch: '第2批｜優良級（第9～16名）', rank: '優良級 #15', town: '埔里鎮', org: '室內空氣品質標章・優良級', name: '臺灣菸酒股份有限公司埔里酒廠', rep: '陳宏明 / 先生', multi: '' },
+  { id: 'q-16', cat: 'iaq', batch: '第2批｜優良級（第9～16名）', rank: '優良級 #16', town: '', org: '室內空氣品質標章・優良級', name: '南投縣聖恩護理之家', rep: '林廣能 / 主任', multi: '' },
+
+  { id: 'q-17', cat: 'iaq', batch: '第3批｜優良級（第17～23名）', rank: '優良級 #17', town: '南投市', org: '室內空氣品質標章・優良級', name: '南投縣政府文化局圖書館', rep: '許毓芳 / 科長', multi: '' },
+  { id: 'q-18', cat: 'iaq', batch: '第3批｜優良級（第17～23名）', rank: '優良級 #18', town: '南投市', org: '室內空氣品質標章・優良級', name: '南投市漳和公辦民營托嬰中心', rep: '賴羽晴 / 理事長', multi: '連領3獎(#18/#24/#25)' },
+  { id: 'q-19', cat: 'iaq', batch: '第3批｜優良級（第17～23名）', rank: '優良級 #19', town: '草屯鎮', org: '室內空氣品質標章・優良級', name: '青松長照社團法人附設南投縣私立草屯新豐住宿長照機構', rep: '陳亮勝 / 主任', multi: '' },
+  { id: 'q-20', cat: 'iaq', batch: '第3批｜優良級（第17～23名）', rank: '優良級 #20', town: '埔里鎮', org: '室內空氣品質標章・優良級', name: '臺中榮民總醫院埔里分院', rep: '林祐儒 / 小姐', multi: '' },
+  { id: 'q-21', cat: 'iaq', batch: '第3批｜優良級（第17～23名）', rank: '優良級 #21', town: '草屯鎮', org: '室內空氣品質標章・優良級', name: '南開科技大學', rep: '趙苡晟 / 專案助理', multi: '兼領綠色採購#2' },
+  { id: 'q-22', cat: 'iaq', batch: '第3批｜優良級（第17～23名）', rank: '優良級 #22', town: '埔里鎮', org: '室內空氣品質標章・優良級', name: '埔基醫療財團法人附設愛蘭護理之家', rep: '會再安排（週一追蹤）', multi: '' },
+  { id: 'q-23', cat: 'iaq', batch: '第3批｜優良級（第17～23名）', rank: '優良級 #23', town: '', org: '室內空氣品質標章・優良級', name: '安泰長照社團法人附設南投縣私立朝日住宿長照機構', rep: '周銘彥', multi: '' },
+
+  { id: 'q-24', cat: 'iaq', batch: '第4批｜良好級（第24～29名・6名）', rank: '良好級 #24', town: '草屯鎮', org: '室內空氣品質標章・良好級', name: '土城公辦民營托嬰中心', rep: '賴羽晴 / 理事長', multi: '連領3獎(#18/#24/#25)' },
+  { id: 'q-25', cat: 'iaq', batch: '第4批｜良好級（第24～29名・6名）', rank: '良好級 #25', town: '南投市', org: '室內空氣品質標章・良好級', name: '南投市公辦民營托嬰中心', rep: '賴羽晴 / 理事長', multi: '連領3獎(#18/#24/#25)' },
+  { id: 'q-26', cat: 'iaq', batch: '第4批｜良好級（第24～29名・6名）', rank: '良好級 #26', town: '', org: '室內空氣品質標章・良好級', name: '私立永安護理之家', rep: '代表出席', multi: '' },
+  { id: 'q-27', cat: 'iaq', batch: '第4批｜良好級（第24～29名・6名）', rank: '良好級 #27', town: '草屯鎮', org: '室內空氣品質標章・良好級', name: '青松長照社團法人附設南投縣私立草屯青松住宿長照機構', rep: '林辰叡 / 主任', multi: '' },
+  { id: 'q-28', cat: 'iaq', batch: '第4批｜良好級（第24～29名・6名）', rank: '良好級 #28', town: '', org: '室內空氣品質標章・良好級', name: '南投縣私立博愛護理之家', rep: '謝小姐 / 行政代表', multi: '' },
+  { id: 'q-29', cat: 'iaq', batch: '第4批｜良好級（第24～29名・6名）', rank: '良好級 #29', town: '', org: '室內空氣品質標章・良好級', name: '財團法人利河伯社會福利基金會附設台灣省私立基督仁愛之家', rep: '陳喜信 / 總務', multi: '' }
 ];
+
+const DEFAULT_UNIT_MAP = Object.fromEntries(DEFAULT_UNITS.map(u => [u.id, u]));
 
 const VIP_GROUPS = [
   { title: '🏛️ 縣府長官與立委', members: ['許淑華 縣長', '王瑞德 副縣長', '李良珠 秘書長', '簡育民 副秘書長', '游顥 立委', '馬文君 立委'] },
@@ -1326,7 +1384,7 @@ const TIMELINE = [
  * 2. 狀態管理與 Google 試算表原子同步引擎
  * ============================================================================
  */
-const STORAGE_KEY = 'nantou_eco_award_115_v5';
+const STORAGE_KEY = 'nantou_eco_award_115_v6';
 const GAS_URL_KEY = 'nantou_eco_award_115_gas_url';
 const DEFAULT_GAS_URL = 'https://script.google.com/macros/s/AKfycbwkntJgqPBDLE_eJ50wzzi8PqTcYelMT2Xt91nQSlOEXmmi8--kwzgKA5Ew0qRhAR8p/exec';
 
@@ -1468,20 +1526,57 @@ async function pullFromGoogleSheet() {
     let nextUnits = data.units;
     const nextVips = data.vips || {};
 
-    if (nextUnits.some(u => u.cat === 'clean' && (u.name || '').includes('受獎單位 #'))) {
-      const realCleanRows = DEFAULT_UNITS.filter(u => u.cat === 'clean').map(u => ({
-        ...u, status: 'none', isProxy: false, note: '', gift: false
-      }));
-      nextUnits = nextUnits.filter(u => u.cat !== 'clean').concat(realCleanRows);
-      appState.units = nextUnits;
+    // 補齊預設代表人姓名、解析雲端更新的代表姓名，並帶入跨獎提醒標籤
+    nextUnits = nextUnits.map(u => {
+      const def = DEFAULT_UNIT_MAP[u.id] || {};
+      let rawNote = String(u.note || '');
+      let resolvedRep = def.rep || '';
+      const repMatch = rawNote.match(/【代表:(.*?)】/);
+      if (repMatch) {
+        resolvedRep = repMatch[1].trim();
+        rawNote = rawNote.replace(/\s*【代表:.*?】/, '').trim();
+      }
+      return {
+        ...u,
+        rep: resolvedRep,
+        multi: def.multi || '',
+        note: rawNote
+      };
+    });
+
+    // 若雲端試算表仍含舊版佔位資料，自動升級為完整 78 筆真實受獎名單
+    const hasPlaceholder = nextUnits.some(u =>
+      (u.name || '').includes('受獎單位 #') ||
+      (u.name || '').includes('綠色採購績優單位 #') ||
+      (u.name || '').includes('機車排氣檢驗站 #') ||
+      (u.name || '').includes('簡訊收集績優站 #') ||
+      (u.name || '').includes('定檢率提升績優站 #') ||
+      (u.name || '').includes('室內空品優良單位 #') ||
+      (u.name || '').includes('室內空品良好單位 #')
+    );
+
+    if (hasPlaceholder) {
+      const statusCache = Object.fromEntries(nextUnits.map(u => [u.id, u]));
+      const upgradedUnits = DEFAULT_UNITS.map(def => {
+        const old = statusCache[def.id];
+        const keepOld = old && !['green', 'moto', 'iaq'].includes(def.cat);
+        return {
+          ...def,
+          status: keepOld ? (old.status || 'none') : 'none',
+          isProxy: keepOld ? !!old.isProxy : false,
+          note: keepOld ? (old.note || '') : '',
+          gift: keepOld ? !!old.gift : false
+        };
+      });
+      appState.units = upgradedUnits;
       appState.vips = nextVips;
       saveLocalOnly();
       renderAll();
       await postToGas({
-        action: 'replaceCategory',
+        action: 'resetAll',
         adminKey: ADMIN_PASS,
-        cat: 'clean',
-        rows: realCleanRows
+        units: upgradedUnits,
+        vipGroups: VIP_GROUPS
       });
       return;
     }
@@ -1707,6 +1802,7 @@ function openEditModal(id) {
   uiState.editIsProxy = !!u.isProxy;
   uiState.editGift = !!u.gift;
   document.getElementById('editUnitTitle').textContent = `${CATEGORIES[u.cat].icon} ${u.name}`;
+  document.getElementById('editRepInput').value = u.rep || '';
   document.getElementById('editNoteInput').value = u.note || '';
   updateEditModalButtons();
   document.getElementById('editModal').classList.add('show');
@@ -1742,9 +1838,21 @@ function updateEditModalButtons() {
   bGift.textContent = uiState.editGift ? '🎁 已領取伴手禮（再按一次取消）' : '🎁 伴手禮尚未領取（點擊標記）';
 }
 
+function encodeNoteForGas(u) {
+  const defRep = (DEFAULT_UNIT_MAP[u.id] && DEFAULT_UNIT_MAP[u.id].rep) || '';
+  const curRep = (u.rep || '').trim();
+  const cleanNote = (u.note || '').trim();
+  if (curRep !== defRep) {
+    return cleanNote ? `${cleanNote} 【代表:${curRep}】` : `【代表:${curRep}】`;
+  }
+  return cleanNote;
+}
+
 function saveUnitEdit(evt) {
   const u = appState.units.find(x => x.id === uiState.editingId);
   if (!u) return;
+  const oldRep = u.rep || '';
+  u.rep = document.getElementById('editRepInput').value.trim();
   u.isProxy = uiState.editIsProxy;
   u.note = document.getElementById('editNoteInput').value.trim();
   u.gift = uiState.editGift;
@@ -1761,7 +1869,7 @@ function saveUnitEdit(evt) {
     patch: {
       status: u.status,
       isProxy: u.isProxy,
-      note: u.note,
+      note: encodeNoteForGas(u),
       gift: u.gift
     }
   });
@@ -2122,7 +2230,11 @@ function renderUnitCard(u, mode = 'checkin', idx = 0, showCatBadge = false) {
           </div>
           <div class="unit-org">${u.org}</div>
           <div class="unit-name">${u.name}</div>
-          ${u.note ? `<div style="margin-top:5px;font-size:12px;font-weight:800;color:#FDE047;">💬 備註：${u.note}</div>` : ''}
+          ${(mode === 'usher' && u.rep) ? `<div style="margin-top:5px;display:flex;flex-wrap:wrap;align-items:center;gap:6px;">
+            <span style="font-size:12px;font-weight:900;color:${u.rep.includes('追蹤') || u.rep.includes('安排') ? '#FCA5A5' : '#BAE6FD'};">👤 代表：${u.rep}</span>
+            ${u.multi ? `<span style="font-size:10px;font-weight:900;background:#FDE047;color:#090E14;padding:1px 6px;border-radius:6px;border:1.5px solid #090E14;">🔁 ${u.multi}</span>` : ''}
+          </div>` : ''}
+          ${u.note ? `<div style="margin-top:5px;font-size:12px;font-weight:800;color:#FDE047;">💬 現場備註：${u.note}</div>` : ''}
         </div>
         <div class="stamp" style="background:${st.bg};">${st.label}</div>
       </div>
@@ -2138,7 +2250,7 @@ function renderCheckinView() {
   const kw = uiState.search.toLowerCase();
   const filtered = appState.units.filter(u => {
     const matchCat = uiState.catFilter === 'all' || u.cat === uiState.catFilter;
-    const matchKw = !kw || [u.name, u.org, u.town, u.note, u.rank].join(' ').toLowerCase().includes(kw);
+    const matchKw = !kw || [u.name, u.rep, u.multi, u.org, u.town, u.note, u.rank].join(' ').toLowerCase().includes(kw);
     return matchCat && matchKw;
   });
 
