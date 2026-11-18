@@ -911,6 +911,412 @@
       }
     }
 
+    /* ========================================================================
+       卡通座位圖與全場配置圖樣式
+       ======================================================================== */
+    .seat-stage-bar {
+      margin-top: 10px;
+      background: linear-gradient(90deg, #991B1B 0%, #DC2626 50%, #991B1B 100%);
+      border: 2.5px solid var(--ink);
+      border-radius: 12px;
+      box-shadow: 0 3px 0 var(--ink);
+      padding: 7px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      font-weight: 900;
+      color: #FFF;
+    }
+
+    .seat-grid-scroll {
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .seat-matrix {
+      display: grid;
+      gap: 6px;
+      min-width: 100%;
+    }
+
+    .seat-cell {
+      background: #172330;
+      border: 2px solid var(--ink);
+      border-radius: 10px;
+      padding: 6px 5px;
+      min-height: 54px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      font-size: 11px;
+      font-weight: 800;
+      color: #CBD5E1;
+      line-height: 1.25;
+      cursor: pointer;
+      position: relative;
+      transition: transform 0.1s ease;
+    }
+
+    .seat-cell.is-empty {
+      background: rgba(15, 23, 42, 0.35);
+      border-style: dashed;
+      border-color: #334155;
+      color: #475569;
+      cursor: default;
+    }
+
+    .seat-cell.is-seated {
+      background: #1A332A;
+      border-color: #4ADE80;
+    }
+
+    .seat-cell.is-target {
+      background: #FEF08A !important;
+      color: #090E14 !important;
+      border: 3px solid #F59E0B !important;
+      box-shadow: 0 0 0 2px #090E14, 0 0 16px rgba(250, 204, 21, 0.85);
+      transform: scale(1.04);
+      z-index: 2;
+      animation: seatPulse 1.2s ease-in-out infinite;
+    }
+
+    @keyframes seatPulse {
+      0%, 100% { transform: scale(1.03); }
+      50% { transform: scale(1.08); }
+    }
+
+    .seat-row-tag {
+      font-size: 9px;
+      font-weight: 900;
+      opacity: 0.7;
+      margin-bottom: 2px;
+    }
+
+    /* ========================================================================
+       全場詳細座位表 (Full-Hall Detailed Seating Chart) 樣式
+       ======================================================================== */
+    .full-seat-modal-card {
+      width: 100%;
+      max-width: 1120px;
+      height: 92dvh;
+      max-height: 92dvh;
+      background: var(--bg-panel);
+      border: 3px solid var(--ink);
+      border-radius: 20px;
+      box-shadow: 0 6px 0 var(--ink);
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      animation: cardPopIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .fseat-toolbar {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      margin-bottom: 8px;
+      flex: 0 0 auto;
+    }
+
+    .fseat-search-row {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .fseat-search {
+      flex: 1 1 auto;
+      background: #0F172A;
+      color: #FFF;
+      border: 2px solid var(--ink);
+      border-radius: 10px;
+      padding: 7px 10px;
+      font-size: 13px;
+      font-weight: 700;
+      font-family: inherit;
+      outline: none;
+    }
+
+    .fseat-search:focus {
+      border-color: #FACC15;
+    }
+
+    .fseat-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      font-size: 10px;
+      font-weight: 800;
+      color: #CBD5E1;
+      align-items: center;
+    }
+
+    .legend-dot {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 3px;
+      border: 1.5px solid #090E14;
+      margin-right: 3px;
+      vertical-align: middle;
+    }
+
+    .fseat-viewport {
+      flex: 1 1 auto;
+      overflow: auto;
+      background: #0B1118;
+      border: 2.5px solid var(--ink);
+      border-radius: 14px;
+      padding: 10px;
+      position: relative;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .fseat-hall-canvas {
+      display: flex;
+      align-items: stretch;
+      gap: 8px;
+      width: max-content;
+      min-width: 100%;
+      transition: transform 0.2s ease;
+      transform-origin: top left;
+    }
+
+    /* 鳥瞰縮小模式（相容 iOS Safari 捲動邊界） */
+    .fseat-viewport.zoom-bird .dseat-grid {
+      grid-template-columns: repeat(var(--cols, 2), 68px) !important;
+      gap: 3px;
+    }
+    .fseat-viewport.zoom-bird .dseat-cell {
+      width: 68px;
+      min-height: 46px;
+      padding: 3px;
+    }
+    .fseat-viewport.zoom-bird .dseat-name {
+      font-size: 9px;
+      line-height: 1.15;
+    }
+    .fseat-viewport.zoom-bird .dseat-rep,
+    .fseat-viewport.zoom-bird .dseat-rank {
+      display: none;
+    }
+
+    .hall-col {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      background: #131D28;
+      border: 2px solid #263547;
+      border-radius: 14px;
+      padding: 8px;
+    }
+
+    .hall-col-header {
+      text-align: center;
+      font-size: 12px;
+      font-weight: 900;
+      color: #F8FAFC;
+      background: #1E293B;
+      border: 2px solid var(--ink);
+      border-radius: 8px;
+      padding: 4px 8px;
+      letter-spacing: 0.5px;
+    }
+
+    .hall-aisle {
+      width: 26px;
+      flex: 0 0 26px;
+      background: repeating-linear-gradient(
+        180deg,
+        #17212B 0px,
+        #17212B 12px,
+        #1E2B38 12px,
+        #1E2B38 24px
+      );
+      border: 2px dashed #334155;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      writing-mode: vertical-rl;
+      font-size: 11px;
+      font-weight: 900;
+      color: #64748B;
+      letter-spacing: 6px;
+      user-select: none;
+    }
+
+    .zone-box {
+      border: 2.5px solid var(--ink);
+      border-radius: 12px;
+      padding: 6px;
+      background: #182432;
+      transition: opacity 0.2s ease;
+    }
+
+    .zone-box.is-dimmed {
+      opacity: 0.28;
+    }
+
+    .zone-box-title {
+      font-size: 11px;
+      font-weight: 900;
+      color: var(--ink);
+      padding: 3px 8px;
+      border-radius: 7px;
+      border: 1.5px solid var(--ink);
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .dseat-grid {
+      display: grid;
+      gap: 5px;
+    }
+
+    .dseat-cell {
+      width: 102px;
+      min-height: 62px;
+      background: #1E293B;
+      border: 2px solid var(--ink);
+      border-radius: 9px;
+      padding: 4px 5px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      text-align: center;
+      cursor: pointer;
+      position: relative;
+      transition: transform 0.1s ease, box-shadow 0.1s ease;
+    }
+
+    .dseat-cell:active {
+      transform: scale(0.96);
+    }
+
+    .dseat-cell.is-empty {
+      background: rgba(15, 23, 42, 0.35);
+      border: 1.5px dashed #334155;
+      color: #475569;
+      justify-content: center;
+      cursor: default;
+      font-size: 10px;
+      font-weight: 800;
+    }
+
+    /* 狀態著色 */
+    .dseat-cell.st-none {
+      background: #1E293B;
+      color: #F1F5F9;
+    }
+    .dseat-cell.st-checked {
+      background: #16334D;
+      border-color: #38BDF8;
+      box-shadow: inset 0 0 0 1px #38BDF8;
+    }
+    .dseat-cell.st-seated {
+      background: #16382B;
+      border-color: #4ADE80;
+      box-shadow: inset 0 0 0 1px #4ADE80;
+    }
+    .dseat-cell.st-stage {
+      background: #3B3314;
+      border-color: #FACC15;
+      box-shadow: inset 0 0 0 1px #FACC15;
+    }
+    .dseat-cell.st-done {
+      background: #141B24;
+      border-color: #475569;
+      opacity: 0.65;
+    }
+
+    /* 搜尋命中或選取高亮 */
+    .dseat-cell.is-match,
+    .dseat-cell.is-selected {
+      background: #FEF08A !important;
+      color: #090E14 !important;
+      border: 3px solid #F59E0B !important;
+      box-shadow: 0 0 0 2px #090E14, 0 0 14px rgba(250, 204, 21, 0.9) !important;
+      opacity: 1 !important;
+      z-index: 5;
+      transform: scale(1.04);
+    }
+
+    .dseat-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 9px;
+      font-weight: 900;
+      gap: 2px;
+    }
+
+    .dseat-pos {
+      opacity: 0.75;
+    }
+
+    .dseat-rank {
+      padding: 0 4px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.16);
+    }
+    .dseat-cell.is-match .dseat-rank,
+    .dseat-cell.is-selected .dseat-rank {
+      background: #F59E0B;
+      color: #090E14;
+    }
+
+    .dseat-name {
+      font-size: 11px;
+      font-weight: 900;
+      line-height: 1.2;
+      margin: 2px 0;
+      word-break: break-all;
+    }
+
+    .dseat-rep {
+      font-size: 9.5px;
+      font-weight: 800;
+      color: #93C5FD;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .dseat-cell.is-match .dseat-rep,
+    .dseat-cell.is-selected .dseat-rep {
+      color: #92400E;
+    }
+
+    .static-hall-block {
+      border: 2px solid var(--ink);
+      border-radius: 10px;
+      padding: 8px 6px;
+      text-align: center;
+      font-size: 12px;
+      font-weight: 900;
+      box-shadow: 0 2px 0 var(--ink);
+    }
+
+    /* 底部選取座位即時操作卡 */
+    .fseat-inspector {
+      margin-top: 8px;
+      background: #172330;
+      border: 2.5px solid #FACC15;
+      border-radius: 14px;
+      padding: 9px 11px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex: 0 0 auto;
+    }
+
     .modal-backdrop {
       display: none;
       position: fixed;
@@ -1060,12 +1466,16 @@
         </button>
 
         <div class="hud-compact-stats">
-          <span>報到 <b style="color:#38BDF8;" id="statChecked">0</b>/<span id="statTotal">78</span></span>
+          <span>報到 <b style="color:#38BDF8;" id="statChecked">0</b>/<span id="statTotal">84</span></span>
           <span>入座 <b style="color:#4ADE80;" id="statSeated">0</b></span>
-          <span>異動 <b style="color:#FB7185;" id="statProxy">0</b></span>
         </div>
 
-        <button class="toon-btn icon-btn" onclick="handleGearClick()" title="管理設定（需密碼）">⚙️</button>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <button class="toon-btn" style="background:#DDD6FE;color:var(--ink);padding:5px 9px;font-size:12px;" onclick="openVenueModal()" title="開啟詳細座位表">
+            🗺️ 座位表
+          </button>
+          <button class="toon-btn icon-btn" onclick="handleGearClick()" title="管理設定（需密碼）">⚙️</button>
+        </div>
       </div>
 
       <!-- 一鍵秒切 4 角色分頁列 -->
@@ -1120,6 +1530,65 @@
       <button class="toon-btn" style="width:100%;background:#4ADE80;color:var(--ink);padding:11px;font-size:15px;" onclick="saveUnitEdit(event)">
         💾 儲存並同步
       </button>
+    </div>
+  </div>
+
+  <!-- 單一單位高亮座位圖彈窗 -->
+  <div id="seatModal" class="modal-backdrop" onclick="if(event.target===this) closeSeatModal()">
+    <div class="modal-card" style="max-width:540px;">
+      <div class="modal-title">
+        <span id="seatModalTitle">🪑 座位位置圖</span>
+        <button class="toon-btn" style="background:#334155;color:#FFF;padding:4px 10px;" onclick="closeSeatModal()">✕</button>
+      </div>
+      <div id="seatModalInfo" style="font-size:12px;font-weight:800;color:#FDE047;margin-bottom:8px;"></div>
+      <div id="seatModalBody"></div>
+    </div>
+  </div>
+
+  <!-- 全場詳細座位表彈窗 (84席完整顯示 + 即時狀態 + 點擊操作) -->
+  <div id="venueModal" class="modal-backdrop" style="padding:8px;" onclick="if(event.target===this) closeVenueModal()">
+    <div class="full-seat-modal-card">
+      <div class="modal-title" style="margin-bottom:6px;flex:0 0 auto;">
+        <span style="font-size:15px;">🗺️ 7F放映廳・詳細座位表（全場84席）</span>
+        <div style="display:flex;gap:6px;align-items:center;">
+          <button id="fseatZoomBtn" class="toon-btn" style="background:#38BDF8;color:var(--ink);padding:4px 9px;font-size:11px;" onclick="toggleFseatZoom()">
+            🔭 鳥瞰全覽
+          </button>
+          <button class="toon-btn" style="background:#334155;color:#FFF;padding:4px 10px;" onclick="closeVenueModal()">✕</button>
+        </div>
+      </div>
+
+      <div class="fseat-toolbar">
+        <div class="fseat-search-row">
+          <input id="fseatSearchInput" class="fseat-search" type="search"
+            placeholder="🔍 搜尋單位或代表姓名，立即閃爍標記座位..."
+            oninput="handleFseatSearch(this.value)" />
+          <button id="fseatSearchClear" class="toon-btn" style="display:none;background:#334155;color:#FFF;padding:6px 9px;font-size:11px;" onclick="clearFseatSearch()">✕</button>
+        </div>
+
+        <div id="fseatFilterRow" class="cat-scroller" style="margin-bottom:0;padding-bottom:2px;"></div>
+
+        <div class="fseat-legend">
+          <span><i class="legend-dot" style="background:#1E293B;border-color:#64748B;"></i>未報到</span>
+          <span><i class="legend-dot" style="background:#38BDF8;"></i>已報到</span>
+          <span><i class="legend-dot" style="background:#4ADE80;"></i>已入座</span>
+          <span><i class="legend-dot" style="background:#FACC15;"></i>舞台預備</span>
+          <span><i class="legend-dot" style="background:#141B24;"></i>已領獎</span>
+          <span style="margin-left:auto;color:#94A3B8;">👆 左右滑動查看四區・點擊座位可更新</span>
+        </div>
+      </div>
+
+      <div id="fseatViewport" class="fseat-viewport">
+        <div id="fseatCanvas" class="fseat-hall-canvas"></div>
+      </div>
+
+      <div class="seat-stage-bar" style="margin-top:8px;flex:0 0 auto;">
+        <span>⬇️ 上台方向（左側）</span>
+        <span>🎭 舞 台（第1排最靠近舞台）</span>
+        <span>⬆️ 下台方向（右側）</span>
+      </div>
+
+      <div id="fseatInspector" class="fseat-inspector" style="display:none;"></div>
     </div>
   </div>
 
@@ -1240,11 +1709,11 @@ const ROLES = {
 };
 
 const CATEGORIES = {
-  toilet: { id: 'toilet', name: '績優公廁', icon: '🚽', color: '#38BDF8', lead: '皓幃', time: '14:35~14:50', countLabel: '9名' },
-  clean:  { id: 'clean',  name: '環境清潔', icon: '🧹', color: '#4ADE80', lead: '志偉', time: '14:50~15:05', countLabel: '15名' },
-  green:  { id: 'green',  name: '綠色採購', icon: '🛍️', color: '#FB923C', lead: '宛君', time: '15:05~15:20', countLabel: '15名' },
-  moto:   { id: 'moto',   name: '機車排氣', icon: '🛵', color: '#2DD4BF', lead: '移污', time: '15:20~15:35', countLabel: '10名' },
-  iaq:    { id: 'iaq',    name: '室內空品', icon: '🍃', color: '#C084FC', lead: '空品', time: '15:35~15:55', countLabel: '29名' }
+  toilet: { id: 'toilet', name: '績優公廁', icon: '🚽', color: '#38BDF8', lead: '皓幃', time: '14:35~14:50', countLabel: '9名',  cols: 2, rows: 5, zone: '左1區・長官後方' },
+  clean:  { id: 'clean',  name: '環境清潔', icon: '🧹', color: '#4ADE80', lead: '志偉', time: '14:50~15:05', countLabel: '15名', cols: 3, rows: 5, zone: '左2區・前段' },
+  green:  { id: 'green',  name: '綠色採購', icon: '🛍️', color: '#FB923C', lead: '宛君', time: '15:05~15:20', countLabel: '16名', cols: 5, rows: 4, zone: '左2區・清潔後方' },
+  moto:   { id: 'moto',   name: '機車排氣', icon: '🛵', color: '#2DD4BF', lead: '移污', time: '15:20~15:35', countLabel: '10名', cols: 2, rows: 5, zone: '左1區・公廁後方' },
+  iaq:    { id: 'iaq',    name: '室內空品', icon: '🍃', color: '#C084FC', lead: '空品', time: '15:35~15:55', countLabel: '34名', cols: 7, rows: 5, zone: '右2區・全區' }
 };
 
 const STATUS_META = {
@@ -1255,105 +1724,116 @@ const STATUS_META = {
   done:    { label: '已領獎', bg: '#94A3B8' }
 };
 
+// 嚴格依照「座位表.pdf」匯入（共84席：公廁9 + 清潔15 + 綠色採購16 + 機車10 + 室內空品34）
 const DEFAULT_UNITS = [
-  // === 1. 績優公廁 (9名) ===
-  { id: 't-1', cat: 'toilet', batch: '第1組｜整潔美觀組（3名）', rank: '特優', town: '南投市', org: '交通部高速公路局中區養護工程分局', name: '南投服務區北棟及南棟公廁', rep: '呈核中（週一追蹤）', multi: '' },
-  { id: 't-2', cat: 'toilet', batch: '第1組｜整潔美觀組（3名）', rank: '優等', town: '水里鄉', org: '交通部觀光署日月潭國家風景區管理處-車埕管理站', name: '車埕鐵道觀光小學堂 1F 公廁', rep: '涂振昇 / 秘書', multi: '日管處連領4獎' },
-  { id: 't-3', cat: 'toilet', batch: '第1組｜整潔美觀組（3名）', rank: '優等', town: '魚池鄉', org: '交通部觀光署日月潭國家風景區管理處', name: '向山遊客中心公廁', rep: '涂振昇 / 秘書', multi: '日管處連領4獎' },
+  // === 1. 績優公廁 (9席 - 左1區 2欄×5排) ===
+  { id: 't-1', cat: 'toilet', batch: '第1組｜整潔美觀組（3名）', rank: '特優', town: '南投市', org: '交通部高速公路局中區養護工程分局', name: '南投服務區北棟及南棟公廁', rep: '呈核中（週一追蹤）', multi: '', seatRow: 4, seatCol: 2, seatLabel: '左1區・公廁第4排右' },
+  { id: 't-2', cat: 'toilet', batch: '第1組｜整潔美觀組（3名）', rank: '優等', town: '水里鄉', org: '交通部觀光署日月潭國家風景區管理處-車埕管理站', name: '車埕鐵道觀光小學堂 1F 公廁', rep: '涂振昇 / 秘書', multi: '日管處連領4獎', seatRow: 3, seatCol: 2, seatLabel: '左1區・公廁第3排右' },
+  { id: 't-3', cat: 'toilet', batch: '第1組｜整潔美觀組（3名）', rank: '優等', town: '魚池鄉', org: '交通部觀光署日月潭國家風景區管理處', name: '向山遊客中心公廁', rep: '涂振昇 / 秘書', multi: '日管處連領4獎', seatRow: 2, seatCol: 2, seatLabel: '左1區・公廁第2排右' },
 
-  { id: 't-4', cat: 'toilet', batch: '第2組｜多元服務組（3名）', rank: '特優', town: '埔里鎮', org: '台灣中油股份有限公司-埔里加油站', name: '台灣中油埔里站公廁', rep: '戴哲夫 / 站長', multi: '' },
-  { id: 't-5', cat: 'toilet', batch: '第2組｜多元服務組（3名）', rank: '優等', town: '魚池鄉', org: '交通部觀光署日月潭國家風景區管理處', name: '伊達邵遊客中心公廁', rep: '涂振昇 / 秘書', multi: '日管處連領4獎' },
-  { id: 't-6', cat: 'toilet', batch: '第2組｜多元服務組（3名）', rank: '優等', town: '魚池鄉', org: '交通部觀光署日月潭國家風景區管理處-埔里管理站', name: '朝霧碼頭公廁', rep: '涂振昇 / 秘書', multi: '日管處連領4獎' },
+  { id: 't-4', cat: 'toilet', batch: '第2組｜多元服務組（3名）', rank: '特優', town: '埔里鎮', org: '台灣中油股份有限公司-埔里加油站', name: '台灣中油埔里站公廁', rep: '戴哲夫 / 站長', multi: '', seatRow: 1, seatCol: 2, seatLabel: '左1區・公廁第1排右(最前)' },
+  { id: 't-5', cat: 'toilet', batch: '第2組｜多元服務組（3名）', rank: '優等', town: '魚池鄉', org: '交通部觀光署日月潭國家風景區管理處', name: '伊達邵遊客中心公廁', rep: '涂振昇 / 秘書', multi: '日管處連領4獎', seatRow: 2, seatCol: 1, seatLabel: '左1區・公廁第2排左(靠上台)' },
+  { id: 't-6', cat: 'toilet', batch: '第2組｜多元服務組（3名）', rank: '優等', town: '魚池鄉', org: '交通部觀光署日月潭國家風景區管理處-埔里管理站', name: '朝霧碼頭公廁', rep: '涂振昇 / 秘書', multi: '日管處連領4獎', seatRow: 1, seatCol: 1, seatLabel: '左1區・公廁第1排左(最前)' },
 
-  { id: 't-7', cat: 'toilet', batch: '第3組｜公共設施組（3名）', rank: '特優', town: '名間鄉', org: '交通部觀光署參山國家風景區管理處', name: '松柏嶺遊客中心公廁', rep: '廖錫標 / 副處長', multi: '' },
-  { id: 't-8', cat: 'toilet', batch: '第3組｜公共設施組（3名）', rank: '優等', town: '竹山鎮', org: '杉林溪遊樂事業股份有限公司', name: '杉林溪紅樓公廁', rep: '李侑璘 / 工務部經理', multi: '兼領綠色採購#12' },
-  { id: 't-9', cat: 'toilet', batch: '第3組｜公共設施組（3名）', rank: '優等', town: '集集鎮', org: '農業部生物多樣性研究所', name: '保育教育館 1F 公廁', rep: '承辦出差（週一追蹤）', multi: '' },
+  { id: 't-7', cat: 'toilet', batch: '第3組｜公共設施組（3名）', rank: '特優', town: '名間鄉', org: '交通部觀光署參山國家風景區管理處', name: '松柏嶺遊客中心公廁', rep: '廖錫標 / 副處長', multi: '', seatRow: 5, seatCol: 2, seatLabel: '左1區・公廁第5排右(最後)' },
+  { id: 't-8', cat: 'toilet', batch: '第3組｜公共設施組（3名）', rank: '優等', town: '竹山鎮', org: '杉林溪遊樂事業股份有限公司', name: '杉林溪紅樓公廁', rep: '李侑璘 / 工務部經理', multi: '兼領綠色採購', seatRow: 4, seatCol: 1, seatLabel: '左1區・公廁第4排左(靠上台)' },
+  { id: 't-9', cat: 'toilet', batch: '第3組｜公共設施組（3名）', rank: '優等', town: '集集鎮', org: '農業部生物多樣性研究所', name: '保育教育館 1F 公廁', rep: '承辦出差（週一追蹤）', multi: '', seatRow: 3, seatCol: 1, seatLabel: '左1區・公廁第3排左(靠上台)' },
 
-  // === 2. 環境清潔考核 (15名) ===
-  { id: 'c-1',  cat: 'clean', batch: '第1批｜鄉鎮市公所第一組（2名）', rank: '第一名', town: '草屯鎮', org: '環境清潔考核・鄉鎮市公所第一組', name: '南投縣草屯鎮公所', rep: '週一追蹤', multi: '' },
-  { id: 'c-2',  cat: 'clean', batch: '第1批｜鄉鎮市公所第一組（2名）', rank: '第二名', town: '南投市', org: '環境清潔考核・鄉鎮市公所第一組', name: '南投縣南投市公所', rep: '林晉毅 / 隊長', multi: '' },
+  // === 2. 環境清潔考核 (15席 - 左2區前段 3欄×5排) ===
+  { id: 'c-1',  cat: 'clean', batch: '第1批｜鄉鎮市公所第一組（2名）', rank: '第一名', town: '草屯鎮', org: '環境清潔考核・鄉鎮市公所第一組', name: '南投縣草屯鎮公所', rep: '週一追蹤', multi: '', seatRow: 5, seatCol: 3, seatLabel: '左2區・第5排右(公所欄)' },
+  { id: 'c-2',  cat: 'clean', batch: '第1批｜鄉鎮市公所第一組（2名）', rank: '第二名', town: '南投市', org: '環境清潔考核・鄉鎮市公所第一組', name: '南投縣南投市公所', rep: '林晉毅 / 隊長', multi: '', seatRow: 4, seatCol: 3, seatLabel: '左2區・第4排右(公所欄)' },
 
-  { id: 'c-3',  cat: 'clean', batch: '第2批｜鄉鎮市公所第二組（3名）', rank: '第一名', town: '集集鎮', org: '環境清潔考核・鄉鎮市公所第二組', name: '南投縣集集鎮公所', rep: '黃承哲 / 隊長', multi: '' },
-  { id: 'c-4',  cat: 'clean', batch: '第2批｜鄉鎮市公所第二組（3名）', rank: '第二名', town: '仁愛鄉', org: '環境清潔考核・鄉鎮市公所第二組', name: '南投縣仁愛鄉公所', rep: '王智璇', multi: '' },
-  { id: 'c-5',  cat: 'clean', batch: '第2批｜鄉鎮市公所第二組（3名）', rank: '第三名', town: '國姓鄉', org: '環境清潔考核・鄉鎮市公所第二組', name: '南投縣國姓鄉公所', rep: '邱美玲 / 鄉長', multi: '兼貴賓身分' },
+  { id: 'c-3',  cat: 'clean', batch: '第2批｜鄉鎮市公所第二組（3名）', rank: '第一名', town: '集集鎮', org: '環境清潔考核・鄉鎮市公所第二組', name: '南投縣集集鎮公所', rep: '黃承哲 / 隊長', multi: '', seatRow: 3, seatCol: 3, seatLabel: '左2區・第3排右(公所欄)' },
+  { id: 'c-4',  cat: 'clean', batch: '第2批｜鄉鎮市公所第二組（3名）', rank: '第二名', town: '仁愛鄉', org: '環境清潔考核・鄉鎮市公所第二組', name: '南投縣仁愛鄉公所', rep: '王智璇', multi: '', seatRow: 2, seatCol: 3, seatLabel: '左2區・第2排右(公所欄)' },
+  { id: 'c-5',  cat: 'clean', batch: '第2批｜鄉鎮市公所第二組（3名）', rank: '第三名', town: '國姓鄉', org: '環境清潔考核・鄉鎮市公所第二組', name: '南投縣國姓鄉公所', rep: '邱美玲 / 鄉長', multi: '兼貴賓身分', seatRow: 1, seatCol: 3, seatLabel: '左2區・第1排右(最前)' },
 
-  { id: 'c-6',  cat: 'clean', batch: '第3批｜村里社區 6-10名（5名・先上台）', rank: '第六名', town: '草屯鎮', org: '環境清潔考核・村(里)、社區組', name: '南投縣草屯鎮中山里', rep: '週一追蹤', multi: '' },
-  { id: 'c-7',  cat: 'clean', batch: '第3批｜村里社區 6-10名（5名・先上台）', rank: '第七名', town: '南投市', org: '環境清潔考核・村(里)、社區組', name: '南投縣南投市社團法人南投縣慈慧善行協會', rep: '洪玉琳 / 志工隊隊長', multi: '' },
-  { id: 'c-8',  cat: 'clean', batch: '第3批｜村里社區 6-10名（5名・先上台）', rank: '第八名', town: '集集鎮', org: '環境清潔考核・村(里)、社區組', name: '南投縣集集鎮集集社區發展協會', rep: '黃南珍 / 理事長', multi: '' },
-  { id: 'c-9',  cat: 'clean', batch: '第3批｜村里社區 6-10名（5名・先上台）', rank: '第九名', town: '鹿谷鄉', org: '環境清潔考核・村(里)、社區組', name: '南投縣鹿谷鄉竹林村', rep: '劉孟筑 / 清潔隊長', multi: '' },
-  { id: 'c-10', cat: 'clean', batch: '第3批｜村里社區 6-10名（5名・先上台）', rank: '第十名', town: '草屯鎮', org: '環境清潔考核・村(里)、社區組', name: '南投縣草屯鎮玉峰里', rep: '週一追蹤', multi: '' },
+  { id: 'c-6',  cat: 'clean', batch: '第3批｜村里社區 6-10名（5名・先上台）', rank: '第六名', town: '草屯鎮', org: '環境清潔考核・村(里)、社區組', name: '南投縣草屯鎮中山里', rep: '週一追蹤', multi: '', seatRow: 5, seatCol: 1, seatLabel: '左2區・第5排左(靠上台)' },
+  { id: 'c-7',  cat: 'clean', batch: '第3批｜村里社區 6-10名（5名・先上台）', rank: '第七名', town: '南投市', org: '環境清潔考核・村(里)、社區組', name: '南投縣南投市社團法人南投縣慈慧善行協會', rep: '洪玉琳 / 志工隊隊長', multi: '', seatRow: 4, seatCol: 1, seatLabel: '左2區・第4排左(靠上台)' },
+  { id: 'c-8',  cat: 'clean', batch: '第3批｜村里社區 6-10名（5名・先上台）', rank: '第八名', town: '集集鎮', org: '環境清潔考核・村(里)、社區組', name: '南投縣集集鎮集集社區發展協會', rep: '黃南珍 / 理事長', multi: '', seatRow: 3, seatCol: 1, seatLabel: '左2區・第3排左(靠上台)' },
+  { id: 'c-9',  cat: 'clean', batch: '第3批｜村里社區 6-10名（5名・先上台）', rank: '第九名', town: '鹿谷鄉', org: '環境清潔考核・村(里)、社區組', name: '南投縣鹿谷鄉竹林村', rep: '劉孟筑 / 清潔隊長', multi: '', seatRow: 2, seatCol: 1, seatLabel: '左2區・第2排左(靠上台)' },
+  { id: 'c-10', cat: 'clean', batch: '第3批｜村里社區 6-10名（5名・先上台）', rank: '第十名', town: '草屯鎮', org: '環境清潔考核・村(里)、社區組', name: '南投縣草屯鎮玉峰里', rep: '週一追蹤', multi: '', seatRow: 1, seatCol: 1, seatLabel: '左2區・第1排左(最前)' },
 
-  { id: 'c-11', cat: 'clean', batch: '第4批｜村里社區 1-5名（5名・後上台）', rank: '第一名', town: '仁愛鄉', org: '環境清潔考核・村(里)、社區組', name: '南投縣仁愛鄉大同村(壽亭新村)', rep: '謝戎彥 / 村長', multi: '同梯連領2獎(#1/#4)' },
-  { id: 'c-12', cat: 'clean', batch: '第4批｜村里社區 1-5名（5名・後上台）', rank: '第二名', town: '水里鄉', org: '環境清潔考核・村(里)、社區組', name: '南投縣水里鄉車埕村', rep: '陳美璇 / 職代', multi: '' },
-  { id: 'c-13', cat: 'clean', batch: '第4批｜村里社區 1-5名（5名・後上台）', rank: '第三名', town: '竹山鎮', org: '環境清潔考核・村(里)、社區組', name: '南投縣竹山鎮竹山里', rep: '曾鈺琄 / 里長', multi: '' },
-  { id: 'c-14', cat: 'clean', batch: '第4批｜村里社區 1-5名（5名・後上台）', rank: '第四名', town: '仁愛鄉', org: '環境清潔考核・村(里)、社區組', name: '南投縣仁愛鄉大同村(幼獅道班)', rep: '謝戎彥 / 村長', multi: '同梯連領2獎(#1/#4)' },
-  { id: 'c-15', cat: 'clean', batch: '第4批｜村里社區 1-5名（5名・後上台）', rank: '第五名', town: '魚池鄉', org: '環境清潔考核・村(里)、社區組', name: '南投縣魚池鄉澀水社區發展協會', rep: '蘇吉正 / 理事長', multi: '' },
+  { id: 'c-11', cat: 'clean', batch: '第4批｜村里社區 1-5名（5名・後上台）', rank: '第一名', town: '仁愛鄉', org: '環境清潔考核・村(里)、社區組', name: '南投縣仁愛鄉大同村(壽亭新村)', rep: '謝戎彥 / 村長', multi: '同梯連領2獎(#1/#4)', seatRow: 5, seatCol: 2, seatLabel: '左2區・第5排中' },
+  { id: 'c-12', cat: 'clean', batch: '第4批｜村里社區 1-5名（5名・後上台）', rank: '第二名', town: '水里鄉', org: '環境清潔考核・村(里)、社區組', name: '南投縣水里鄉車埕村', rep: '陳美璇 / 職代', multi: '', seatRow: 4, seatCol: 2, seatLabel: '左2區・第4排中' },
+  { id: 'c-13', cat: 'clean', batch: '第4批｜村里社區 1-5名（5名・後上台）', rank: '第三名', town: '竹山鎮', org: '環境清潔考核・村(里)、社區組', name: '南投縣竹山鎮竹山里', rep: '曾鈺琄 / 里長', multi: '', seatRow: 3, seatCol: 2, seatLabel: '左2區・第3排中' },
+  { id: 'c-14', cat: 'clean', batch: '第4批｜村里社區 1-5名（5名・後上台）', rank: '第四名', town: '仁愛鄉', org: '環境清潔考核・村(里)、社區組', name: '南投縣仁愛鄉大同村(幼獅道班)', rep: '謝戎彥 / 村長', multi: '同梯連領2獎(#1/#4)', seatRow: 2, seatCol: 2, seatLabel: '左2區・第2排中' },
+  { id: 'c-15', cat: 'clean', batch: '第4批｜村里社區 1-5名（5名・後上台）', rank: '第五名', town: '魚池鄉', org: '環境清潔考核・村(里)、社區組', name: '南投縣魚池鄉澀水社區發展協會', rep: '蘇吉正 / 理事長', multi: '', seatRow: 1, seatCol: 2, seatLabel: '左2區・第1排中(最前)' },
 
-  // === 3. 民間綠色採購 (15名 - 第一次8名、第二次7名) ===
-  { id: 'g-1',  cat: 'green', batch: '第1批｜申報超過100萬（前8名）', rank: '績優 #1',  town: '', org: '114年民間綠色採購績優單位', name: '信織實業股份有限公司', rep: '葉光哲 / 經理', multi: '' },
-  { id: 'g-2',  cat: 'green', batch: '第1批｜申報超過100萬（前8名）', rank: '績優 #2',  town: '', org: '114年民間綠色採購績優單位', name: '南開科技大學', rep: '趙苡辰 / 專案助理', multi: '兼領室內空品#21' },
-  { id: 'g-3',  cat: 'green', batch: '第1批｜申報超過100萬（前8名）', rank: '績優 #3',  town: '', org: '114年民間綠色採購績優單位', name: '塔里星室內裝修工程有限公司', rep: '盧政憶 / 負責人', multi: '' },
-  { id: 'g-4',  cat: 'green', batch: '第1批｜申報超過100萬（前8名）', rank: '績優 #4',  town: '', org: '114年民間綠色採購績優單位', name: '双邦實業股份有限公司', rep: '何冠億 / 專員', multi: '' },
-  { id: 'g-5',  cat: 'green', batch: '第1批｜申報超過100萬（前8名）', rank: '績優 #5',  town: '', org: '114年民間綠色採購績優單位', name: '茂順密封元件科技股份有限公司', rep: '施澍澤 / 經理', multi: '' },
-  { id: 'g-6',  cat: 'green', batch: '第1批｜申報超過100萬（前8名）', rank: '績優 #6',  town: '', org: '114年民間綠色採購績優單位', name: '治鼎科技營造股份有限公司', rep: '劉謹銘 / 董事長', multi: '' },
-  { id: 'g-7',  cat: 'green', batch: '第1批｜申報超過100萬（前8名）', rank: '績優 #7',  town: '', org: '114年民間綠色採購績優單位', name: '祥峰電器行', rep: '游梨貞 / 老闆娘', multi: '' },
-  { id: 'g-8',  cat: 'green', batch: '第1批｜申報超過100萬（前8名）', rank: '績優 #8',  town: '', org: '114年民間綠色採購績優單位', name: '翌暘工程顧問有限公司', rep: '張旻潔 / 計畫經理', multi: '' },
+  // === 3. 民間綠色採購 (16席 - 左2區清潔後方 5欄×4排) ===
+  { id: 'g-1',     cat: 'green', batch: '第1批｜申報超過100萬（前8名）', rank: '績優', town: '', org: '114年民間綠色採購績優單位', name: '信織實業股份有限公司', rep: '葉光哲 / 經理', multi: '', seatRow: 1, seatCol: 1, seatLabel: '左2區・綠採第1排第1格(最前左)' },
+  { id: 'g-3',     cat: 'green', batch: '第1批｜申報超過100萬（前8名）', rank: '績優', town: '', org: '114年民間綠色採購績優單位', name: '塔里星室內裝修工程有限公司', rep: '盧政憶 / 負責人', multi: '', seatRow: 1, seatCol: 2, seatLabel: '左2區・綠採第1排第2格' },
+  { id: 'g-4',     cat: 'green', batch: '第1批｜申報超過100萬（前8名）', rank: '績優', town: '', org: '114年民間綠色採購績優單位', name: '双邦實業股份有限公司', rep: '何冠億 / 專員', multi: '', seatRow: 1, seatCol: 3, seatLabel: '左2區・綠採第1排第3格' },
+  { id: 'g-5',     cat: 'green', batch: '第1批｜申報超過100萬（前8名）', rank: '績優', town: '', org: '114年民間綠色採購績優單位', name: '茂順密封元件科技股份有限公司', rep: '施澍澤 / 經理', multi: '', seatRow: 1, seatCol: 4, seatLabel: '左2區・綠採第1排第4格' },
+  { id: 'g-6',     cat: 'green', batch: '第1批｜申報超過100萬（前8名）', rank: '績優', town: '', org: '114年民間綠色採購績優單位', name: '治鼎科技營造股份有限公司', rep: '劉謹銘 / 董事長', multi: '', seatRow: 1, seatCol: 5, seatLabel: '左2區・綠採第1排第5格(最前右)' },
+  { id: 'g-new-1', cat: 'green', batch: '第1批｜申報超過100萬（前8名）', rank: '績優', town: '', org: '114年民間綠色採購績優單位', name: '大有電器行', rep: '現場代表', multi: '', seatRow: 2, seatCol: 1, seatLabel: '左2區・綠採第2排第1格(靠上台)' },
+  { id: 'g-7',     cat: 'green', batch: '第1批｜申報超過100萬（前8名）', rank: '績優', town: '', org: '114年民間綠色採購績優單位', name: '祥峰電器行', rep: '游梨貞 / 老闆娘', multi: '', seatRow: 2, seatCol: 2, seatLabel: '左2區・綠採第2排第2格' },
+  { id: 'g-8',     cat: 'green', batch: '第1批｜申報超過100萬（前8名）', rank: '績優', town: '', org: '114年民間綠色採購績優單位', name: '翌暘工程顧問有限公司', rep: '張旻潔 / 計畫經理', multi: '', seatRow: 2, seatCol: 3, seatLabel: '左2區・綠採第2排第3格' },
 
-  { id: 'g-9',  cat: 'green', batch: '第2批｜申報超過100萬（後7名）', rank: '績優 #9',  town: '', org: '114年民間綠色採購績優單位', name: '雲品國際酒店股份有限公司日月潭分公司', rep: '張喬雯 / 採購部資深副理', multi: '' },
-  { id: 'g-10', cat: 'green', batch: '第2批｜申報超過100萬（後7名）', rank: '績優 #10', town: '', org: '114年民間綠色採購績優單位', name: '福杉國際旅館管理顧問股份有限公司', rep: '曾雅琪 / 經理', multi: '' },
-  { id: 'g-11', cat: 'green', batch: '第2批｜申報超過100萬（後7名）', rank: '績優 #11', town: '', org: '114年民間綠色採購績優單位', name: '三原電器行', rep: '陳韋助 / 老闆', multi: '' },
-  { id: 'g-12', cat: 'green', batch: '第2批｜申報超過100萬（後7名）', rank: '績優 #12', town: '', org: '114年民間綠色採購績優單位', name: '杉林溪遊樂事業股份有限公司', rep: '李侑璘 / 工務部經理', multi: '兼領績優公廁#8' },
-  { id: 'g-13', cat: 'green', batch: '第2批｜申報超過100萬（後7名）', rank: '績優 #13', town: '', org: '114年民間綠色採購績優單位', name: '佳信電器行', rep: '黃志宏 / 負責人', multi: '' },
-  { id: 'g-14', cat: 'green', batch: '第2批｜申報超過100萬（後7名）', rank: '績優 #14', town: '', org: '114年民間綠色採購績優單位', name: '佑民醫療社團法人佑民醫院', rep: '林翠紅 / 行政部副部長', multi: '' },
-  { id: 'g-15', cat: 'green', batch: '第2批｜申報超過100萬（後7名）', rank: '績優 #15', town: '', org: '114年民間綠色採購績優單位', name: '埔基醫療財團法人埔里基督教醫院', rep: '楊崇欣 / 主任', multi: '' },
+  { id: 'g-9',     cat: 'green', batch: '第2批｜申報超過100萬（後8名）', rank: '績優', town: '', org: '114年民間綠色採購績優單位', name: '雲品國際酒店股份有限公司日月潭分公司', rep: '張喬雯 / 採購部資深副理', multi: '', seatRow: 2, seatCol: 4, seatLabel: '左2區・綠採第2排第4格' },
+  { id: 'g-10',    cat: 'green', batch: '第2批｜申報超過100萬（後8名）', rank: '績優', town: '', org: '114年民間綠色採購績優單位', name: '福杉國際旅館管理顧問股份有限公司', rep: '曾雅琪 / 經理', multi: '', seatRow: 2, seatCol: 5, seatLabel: '左2區・綠採第2排第5格' },
+  { id: 'g-11',    cat: 'green', batch: '第2批｜申報超過100萬（後8名）', rank: '績優', town: '', org: '114年民間綠色採購績優單位', name: '三原電器行', rep: '陳韋助 / 老闆', multi: '', seatRow: 3, seatCol: 1, seatLabel: '左2區・綠採第3排第1格(靠上台)' },
+  { id: 'g-12',    cat: 'green', batch: '第2批｜申報超過100萬（後8名）', rank: '績優', town: '', org: '114年民間綠色採購績優單位', name: '杉林溪遊樂事業股份有限公司', rep: '李侑璘 / 工務部經理', multi: '兼領績優公廁', seatRow: 3, seatCol: 2, seatLabel: '左2區・綠採第3排第2格' },
+  { id: 'g-13',    cat: 'green', batch: '第2批｜申報超過100萬（後8名）', rank: '績優', town: '', org: '114年民間綠色採購績優單位', name: '佳信電器行', rep: '黃志宏 / 負責人', multi: '', seatRow: 3, seatCol: 3, seatLabel: '左2區・綠採第3排第3格' },
+  { id: 'g-14',    cat: 'green', batch: '第2批｜申報超過100萬（後8名）', rank: '績優', town: '', org: '114年民間綠色採購績優單位', name: '佑民醫療社團法人佑民醫院', rep: '林翠紅 / 行政部副部長', multi: '', seatRow: 3, seatCol: 4, seatLabel: '左2區・綠採第3排第4格' },
+  { id: 'g-15',    cat: 'green', batch: '第2批｜申報超過100萬（後8名）', rank: '績優', town: '', org: '114年民間綠色採購績優單位', name: '埔基醫療財團法人埔里基督教醫院', rep: '楊崇欣 / 主任', multi: '', seatRow: 3, seatCol: 5, seatLabel: '左2區・綠採第3排第5格' },
+  { id: 'g-new-2', cat: 'green', batch: '第2批｜申報超過100萬（後8名）', rank: '績優', town: '', org: '114年民間綠色採購績優單位', name: '總福營造有限公司', rep: '現場代表', multi: '', seatRow: 4, seatCol: 5, seatLabel: '左2區・綠採第4排第5格(最後右)' },
 
-  // === 4. 優良機車排氣檢驗站 (10名 - 3+2+5) ===
-  { id: 'm-1',  cat: 'moto', batch: '第1批｜第一～三名（3名）', rank: '第一名', town: '竹山鎮', org: '優良機車排氣檢驗站', name: '竹山鎮明昇機車行', rep: '張信法 / 老闆', multi: '' },
-  { id: 'm-2',  cat: 'moto', batch: '第1批｜第一～三名（3名）', rank: '第二名', town: '埔里鎮', org: '優良機車排氣檢驗站', name: '埔里鎮光隆車業', rep: '蔡旭洲 / 老闆', multi: '' },
-  { id: 'm-3',  cat: 'moto', batch: '第1批｜第一～三名（3名）', rank: '第三名', town: '竹山鎮', org: '優良機車排氣檢驗站', name: '竹山鎮信誼機車行', rep: '曾昱綸 / 小老闆', multi: '' },
+  // === 4. 優良機車排氣檢驗站 (10席 - 左1區公廁後方 2欄×5排) ===
+  { id: 'm-1',  cat: 'moto', batch: '第1批｜第一～三名（3名）', rank: '第一名', town: '竹山鎮', org: '優良機車排氣檢驗站', name: '竹山鎮明昇機車行', rep: '張信法 / 老闆', multi: '', seatRow: 5, seatCol: 1, seatLabel: '左1區・排氣第5排左(最後)' },
+  { id: 'm-2',  cat: 'moto', batch: '第1批｜第一～三名（3名）', rank: '第二名', town: '埔里鎮', org: '優良機車排氣檢驗站', name: '埔里鎮光隆車業', rep: '蔡旭洲 / 老闆', multi: '', seatRow: 4, seatCol: 1, seatLabel: '左1區・排氣第4排左(靠上台)' },
+  { id: 'm-3',  cat: 'moto', batch: '第1批｜第一～三名（3名）', rank: '第三名', town: '竹山鎮', org: '優良機車排氣檢驗站', name: '竹山鎮信誼機車行', rep: '曾昱綸 / 小老闆', multi: '', seatRow: 3, seatCol: 1, seatLabel: '左1區・排氣第3排左(靠上台)' },
 
-  { id: 'm-4',  cat: 'moto', batch: '第2批｜簡訊收集績優獎（2名）', rank: '簡訊績優', town: '國姓鄉', org: '簡訊收集績優獎', name: '國姓鄉長興機車行', rep: '何俊賢 / 老闆', multi: '' },
-  { id: 'm-5',  cat: 'moto', batch: '第2批｜簡訊收集績優獎（2名）', rank: '簡訊績優', town: '埔里鎮', org: '簡訊收集績優獎', name: '埔里鎮東岳機車行', rep: '王昱人 / 老闆', multi: '' },
+  { id: 'm-4',  cat: 'moto', batch: '第2批｜簡訊收集績優獎（2名）', rank: '簡訊績優', town: '國姓鄉', org: '簡訊收集績優獎', name: '國姓鄉長興機車行', rep: '何俊賢 / 老闆', multi: '', seatRow: 2, seatCol: 1, seatLabel: '左1區・排氣第2排左(靠上台)' },
+  { id: 'm-5',  cat: 'moto', batch: '第2批｜簡訊收集績優獎（2名）', rank: '簡訊績優', town: '埔里鎮', org: '簡訊收集績優獎', name: '埔里鎮東岳機車行', rep: '王昱人 / 老闆', multi: '', seatRow: 1, seatCol: 1, seatLabel: '左1區・排氣第1排左(最前)' },
 
-  { id: 'm-6',  cat: 'moto', batch: '第3批｜年度定檢率提升績優獎（5名）', rank: '定檢提升', town: '埔里鎮', org: '年度定檢率提升績優獎', name: '埔里鎮百盛機車行', rep: '游景化 / 老闆', multi: '' },
-  { id: 'm-7',  cat: 'moto', batch: '第3批｜年度定檢率提升績優獎（5名）', rank: '定檢提升', town: '埔里鎮', org: '年度定檢率提升績優獎', name: '埔里鎮永旺車業行', rep: '劉志永 / 老闆', multi: '' },
-  { id: 'm-8',  cat: 'moto', batch: '第3批｜年度定檢率提升績優獎（5名）', rank: '定檢提升', town: '埔里鎮', org: '年度定檢率提升績優獎', name: '埔里鎮宏城機車行', rep: '陳佳宏 / 老闆', multi: '' },
-  { id: 'm-9',  cat: 'moto', batch: '第3批｜年度定檢率提升績優獎（5名）', rank: '定檢提升', town: '南投市', org: '年度定檢率提升績優獎', name: '南投市勝美機車行', rep: '鄭偉志 / 老闆', multi: '' },
-  { id: 'm-10', cat: 'moto', batch: '第3批｜年度定檢率提升績優獎（5名）', rank: '定檢提升', town: '草屯鎮', org: '年度定檢率提升績優獎', name: '草屯鎮明利車業', rep: '張芳秋 / 老闆', multi: '' },
+  { id: 'm-6',  cat: 'moto', batch: '第3批｜年度定檢率提升績優獎（5名）', rank: '定檢提升', town: '埔里鎮', org: '年度定檢率提升績優獎', name: '埔里鎮百盛機車行', rep: '游景化 / 老闆', multi: '', seatRow: 5, seatCol: 2, seatLabel: '左1區・排氣第5排右(最後)' },
+  { id: 'm-7',  cat: 'moto', batch: '第3批｜年度定檢率提升績優獎（5名）', rank: '定檢提升', town: '埔里鎮', org: '年度定檢率提升績優獎', name: '埔里鎮永旺車業行', rep: '劉志永 / 老闆', multi: '', seatRow: 4, seatCol: 2, seatLabel: '左1區・排氣第4排右' },
+  { id: 'm-8',  cat: 'moto', batch: '第3批｜年度定檢率提升績優獎（5名）', rank: '定檢提升', town: '埔里鎮', org: '年度定檢率提升績優獎', name: '埔里鎮宏城機車行', rep: '陳佳宏 / 老闆', multi: '', seatRow: 3, seatCol: 2, seatLabel: '左1區・排氣第3排右' },
+  { id: 'm-9',  cat: 'moto', batch: '第3批｜年度定檢率提升績優獎（5名）', rank: '定檢提升', town: '南投市', org: '年度定檢率提升績優獎', name: '南投市勝美機車行', rep: '鄭偉志 / 老闆', multi: '', seatRow: 2, seatCol: 2, seatLabel: '左1區・排氣第2排右' },
+  { id: 'm-10', cat: 'moto', batch: '第3批｜年度定檢率提升績優獎（5名）', rank: '定檢提升', town: '草屯鎮', org: '年度定檢率提升績優獎', name: '草屯鎮明利車業', rep: '張芳秋 / 老闆', multi: '', seatRow: 1, seatCol: 2, seatLabel: '左1區・排氣第1排右(最前)' },
 
-  // === 5. 室內空氣品質自主管理標章 (29名 - 優良級8+8+7、良好級6) ===
-  { id: 'q-1',  cat: 'iaq', batch: '第1批｜優良級（第1～8名）', rank: '優良級 #1',  town: '', org: '室內空氣品質標章・優良級', name: '南投縣私立愛迪生幼兒園', rep: '主任或老師', multi: '' },
-  { id: 'q-2',  cat: 'iaq', batch: '第1批｜優良級（第1～8名）', rank: '優良級 #2',  town: '', org: '室內空氣品質標章・優良級', name: '南投縣私立聖愛幼兒園', rep: '主任或老師', multi: '' },
-  { id: 'q-3',  cat: 'iaq', batch: '第1批｜優良級（第1～8名）', rank: '優良級 #3',  town: '信義鄉', org: '室內空氣品質標章・優良級', name: '信義鄉同富國小附設幼兒園', rep: '主任或老師', multi: '' },
-  { id: 'q-4',  cat: 'iaq', batch: '第1批｜優良級（第1～8名）', rank: '優良級 #4',  town: '鹿谷鄉', org: '室內空氣品質標章・優良級', name: '鹿谷鄉文昌國小附設幼兒園', rep: '李岱恩 / 校長', multi: '' },
-  { id: 'q-5',  cat: 'iaq', batch: '第1批｜優良級（第1～8名）', rank: '優良級 #5',  town: '', org: '室內空氣品質標章・優良級', name: '南投縣私立福祿貝爾幼兒園', rep: '潘家宜 / 園長', multi: '' },
-  { id: 'q-6',  cat: 'iaq', batch: '第1批｜優良級（第1～8名）', rank: '優良級 #6',  town: '魚池鄉', org: '室內空氣品質標章・優良級', name: '魚池鄉魚池國小附設幼兒園', rep: '范美莉 / 主任', multi: '' },
-  { id: 'q-7',  cat: 'iaq', batch: '第1批｜優良級（第1～8名）', rank: '優良級 #7',  town: '信義鄉', org: '室內空氣品質標章・優良級', name: '信義鄉地利國小附設幼兒園', rep: '全主任', multi: '' },
-  { id: 'q-8',  cat: 'iaq', batch: '第1批｜優良級（第1～8名）', rank: '優良級 #8',  town: '', org: '室內空氣品質標章・優良級', name: '南投縣私立格林幼兒園', rep: '同事代表', multi: '' },
+  // === 5. 室內空氣品質自主管理標章 (34席 - 右2區 7欄×5排) ===
+  // 第1批｜優良級（9名）
+  { id: 'q-1',     cat: 'iaq', batch: '第1批｜優良級（9名）', rank: '優良級', town: '', org: '室內空氣品質標章・優良級', name: '南投縣私立愛迪生幼兒園', rep: '主任或老師', multi: '', seatRow: 5, seatCol: 7, seatLabel: '右2區・第5排第7格(最後右)' },
+  { id: 'q-2',     cat: 'iaq', batch: '第1批｜優良級（9名）', rank: '優良級', town: '', org: '室內空氣品質標章・優良級', name: '南投縣私立聖愛幼兒園', rep: '主任或老師', multi: '', seatRow: 4, seatCol: 7, seatLabel: '右2區・第4排第7格' },
+  { id: 'q-3',     cat: 'iaq', batch: '第1批｜優良級（9名）', rank: '優良級', town: '信義鄉', org: '室內空氣品質標章・優良級', name: '信義鄉同富國小附設幼兒園', rep: '主任或老師', multi: '', seatRow: 3, seatCol: 7, seatLabel: '右2區・第3排第7格' },
+  { id: 'q-4',     cat: 'iaq', batch: '第1批｜優良級（9名）', rank: '優良級', town: '鹿谷鄉', org: '室內空氣品質標章・優良級', name: '鹿谷鄉文昌國小附設幼兒園', rep: '李岱恩 / 校長', multi: '', seatRow: 2, seatCol: 7, seatLabel: '右2區・第2排第7格' },
+  { id: 'q-5',     cat: 'iaq', batch: '第1批｜優良級（9名）', rank: '優良級', town: '', org: '室內空氣品質標章・優良級', name: '南投縣私立福祿貝爾幼兒園', rep: '潘家宜 / 園長', multi: '', seatRow: 5, seatCol: 6, seatLabel: '右2區・第5排第6格' },
+  { id: 'q-6',     cat: 'iaq', batch: '第1批｜優良級（9名）', rank: '優良級', town: '魚池鄉', org: '室內空氣品質標章・優良級', name: '魚池鄉魚池國小附設幼兒園', rep: '范美莉 / 主任', multi: '', seatRow: 4, seatCol: 6, seatLabel: '右2區・第4排第6格' },
+  { id: 'q-7',     cat: 'iaq', batch: '第1批｜優良級（9名）', rank: '優良級', town: '信義鄉', org: '室內空氣品質標章・優良級', name: '信義鄉地利國小附設幼兒園', rep: '全主任', multi: '', seatRow: 3, seatCol: 6, seatLabel: '右2區・第3排第6格' },
+  { id: 'q-8',     cat: 'iaq', batch: '第1批｜優良級（9名）', rank: '優良級', town: '', org: '室內空氣品質標章・優良級', name: '南投縣私立格林幼兒園', rep: '同事代表', multi: '', seatRow: 2, seatCol: 6, seatLabel: '右2區・第2排第6格' },
+  { id: 'q-new-1', cat: 'iaq', batch: '第1批｜優良級（9名）', rank: '優良級', town: '', org: '室內空氣品質標章・優良級', name: '光復國小附設幼兒園', rep: '現場代表', multi: '', seatRow: 1, seatCol: 6, seatLabel: '右2區・第1排第6格(最前)' },
 
-  { id: 'q-9',  cat: 'iaq', batch: '第2批｜優良級（第9～16名）', rank: '優良級 #9',  town: '埔里鎮', org: '室內空氣品質標章・優良級', name: '埔里鎮忠孝國小附設幼兒園', rep: '鐘森雄 / 校長', multi: '' },
-  { id: 'q-10', cat: 'iaq', batch: '第2批｜優良級（第9～16名）', rank: '優良級 #10', town: '', org: '室內空氣品質標章・優良級', name: '南投縣私立育樂寶貝托嬰中心', rep: '廖偉琳 / 主任', multi: '' },
-  { id: 'q-11', cat: 'iaq', batch: '第2批｜優良級（第9～16名）', rank: '優良級 #11', town: '', org: '室內空氣品質標章・優良級', name: '國防部全動署後備指揮部明德營區職場互助教保服務中心', rep: '行政人員代表', multi: '' },
-  { id: 'q-12', cat: 'iaq', batch: '第2批｜優良級（第9～16名）', rank: '優良級 #12', town: '南投市', org: '室內空氣品質標章・優良級', name: '南投市新豐國小附設幼兒園', rep: '黃惠瑜 / 主任', multi: '' },
-  { id: 'q-13', cat: 'iaq', batch: '第2批｜優良級（第9～16名）', rank: '優良級 #13', town: '', org: '室內空氣品質標章・優良級', name: '南投縣迦南精神護理之家', rep: '工作人員', multi: '' },
-  { id: 'q-14', cat: 'iaq', batch: '第2批｜優良級（第9～16名）', rank: '優良級 #14', town: '埔里鎮', org: '室內空氣品質標章・優良級', name: '國立暨南國際大學', rep: '卓雨璇 / 小姐', multi: '' },
-  { id: 'q-15', cat: 'iaq', batch: '第2批｜優良級（第9～16名）', rank: '優良級 #15', town: '埔里鎮', org: '室內空氣品質標章・優良級', name: '臺灣菸酒股份有限公司埔里酒廠', rep: '陳宏明 / 先生', multi: '' },
-  { id: 'q-16', cat: 'iaq', batch: '第2批｜優良級（第9～16名）', rank: '優良級 #16', town: '', org: '室內空氣品質標章・優良級', name: '南投縣聖恩護理之家', rep: '林廣能 / 主任', multi: '' },
+  // 第2批｜優良級（9名）
+  { id: 'q-9',     cat: 'iaq', batch: '第2批｜優良級（9名）', rank: '優良級', town: '埔里鎮', org: '室內空氣品質標章・優良級', name: '埔里鎮忠孝國小附設幼兒園', rep: '鐘森雄 / 校長', multi: '', seatRow: 1, seatCol: 5, seatLabel: '右2區・第1排第5格(最前)' },
+  { id: 'q-10',    cat: 'iaq', batch: '第2批｜優良級（9名）', rank: '優良級', town: '', org: '室內空氣品質標章・優良級', name: '南投縣私立育樂寶貝托嬰中心', rep: '廖偉琳 / 主任', multi: '', seatRow: 5, seatCol: 5, seatLabel: '右2區・第5排第5格' },
+  { id: 'q-11',    cat: 'iaq', batch: '第2批｜優良級（9名）', rank: '優良級', town: '', org: '室內空氣品質標章・優良級', name: '國防部全動署後備指揮部明德營區職場互助教保服務中心', rep: '行政人員代表', multi: '', seatRow: 4, seatCol: 5, seatLabel: '右2區・第4排第5格' },
+  { id: 'q-new-3', cat: 'iaq', batch: '第2批｜優良級（9名）', rank: '優良級', town: '埔里鎮', org: '室內空氣品質標章・優良級', name: '康達盛通生活事業-埔里分公司', rep: '現場代表', multi: '', seatRow: 3, seatCol: 5, seatLabel: '右2區・第3排第5格' },
+  { id: 'q-12',    cat: 'iaq', batch: '第2批｜優良級（9名）', rank: '優良級', town: '南投市', org: '室內空氣品質標章・優良級', name: '南投市新豐國小附設幼兒園', rep: '黃惠瑜 / 主任', multi: '', seatRow: 2, seatCol: 5, seatLabel: '右2區・第2排第5格' },
+  { id: 'q-13',    cat: 'iaq', batch: '第2批｜優良級（9名）', rank: '優良級', town: '', org: '室內空氣品質標章・優良級', name: '南投縣迦南精神護理之家', rep: '工作人員', multi: '', seatRow: 1, seatCol: 4, seatLabel: '右2區・第1排第4格(最前)' },
+  { id: 'q-14',    cat: 'iaq', batch: '第2批｜優良級（9名）', rank: '優良級', town: '埔里鎮', org: '室內空氣品質標章・優良級', name: '國立暨南國際大學', rep: '卓雨璇 / 小姐', multi: '', seatRow: 5, seatCol: 4, seatLabel: '右2區・第5排第4格' },
+  { id: 'q-15',    cat: 'iaq', batch: '第2批｜優良級（9名）', rank: '優良級', town: '埔里鎮', org: '室內空氣品質標章・優良級', name: '臺灣菸酒股份有限公司埔里酒廠', rep: '陳宏明 / 先生', multi: '', seatRow: 4, seatCol: 4, seatLabel: '右2區・第4排第4格' },
+  { id: 'q-new-5', cat: 'iaq', batch: '第2批｜優良級（9名）', rank: '優良級', town: '', org: '室內空氣品質標章・優良級', name: '柏克萊托嬰中心', rep: '現場代表', multi: '', seatRow: 3, seatCol: 4, seatLabel: '右2區・第3排第4格' },
 
-  { id: 'q-17', cat: 'iaq', batch: '第3批｜優良級（第17～23名）', rank: '優良級 #17', town: '南投市', org: '室內空氣品質標章・優良級', name: '南投縣政府文化局圖書館', rep: '許毓芳 / 科長', multi: '' },
-  { id: 'q-18', cat: 'iaq', batch: '第3批｜優良級（第17～23名）', rank: '優良級 #18', town: '南投市', org: '室內空氣品質標章・優良級', name: '南投市漳和公辦民營托嬰中心', rep: '賴羽晴 / 理事長', multi: '連領3獎(#18/#24/#25)' },
-  { id: 'q-19', cat: 'iaq', batch: '第3批｜優良級（第17～23名）', rank: '優良級 #19', town: '草屯鎮', org: '室內空氣品質標章・優良級', name: '青松長照社團法人附設南投縣私立草屯新豐住宿長照機構', rep: '陳亮勝 / 主任', multi: '' },
-  { id: 'q-20', cat: 'iaq', batch: '第3批｜優良級（第17～23名）', rank: '優良級 #20', town: '埔里鎮', org: '室內空氣品質標章・優良級', name: '臺中榮民總醫院埔里分院', rep: '林祐儒 / 小姐', multi: '' },
-  { id: 'q-21', cat: 'iaq', batch: '第3批｜優良級（第17～23名）', rank: '優良級 #21', town: '草屯鎮', org: '室內空氣品質標章・優良級', name: '南開科技大學', rep: '趙苡晟 / 專案助理', multi: '兼領綠色採購#2' },
-  { id: 'q-22', cat: 'iaq', batch: '第3批｜優良級（第17～23名）', rank: '優良級 #22', town: '埔里鎮', org: '室內空氣品質標章・優良級', name: '埔基醫療財團法人附設愛蘭護理之家', rep: '會再安排（週一追蹤）', multi: '' },
-  { id: 'q-23', cat: 'iaq', batch: '第3批｜優良級（第17～23名）', rank: '優良級 #23', town: '', org: '室內空氣品質標章・優良級', name: '安泰長照社團法人附設南投縣私立朝日住宿長照機構', rep: '周銘彥', multi: '' },
+  // 第3批｜優良級（9名）
+  { id: 'q-16',    cat: 'iaq', batch: '第3批｜優良級（9名）', rank: '優良級', town: '', org: '室內空氣品質標章・優良級', name: '南投縣聖恩護理之家', rep: '林廣能 / 主任', multi: '', seatRow: 2, seatCol: 4, seatLabel: '右2區・第2排第4格' },
+  { id: 'q-17',    cat: 'iaq', batch: '第3批｜優良級（9名）', rank: '優良級', town: '南投市', org: '室內空氣品質標章・優良級', name: '南投縣政府文化局圖書館', rep: '許毓芳 / 科長', multi: '', seatRow: 1, seatCol: 3, seatLabel: '右2區・第1排第3格(最前)' },
+  { id: 'q-18',    cat: 'iaq', batch: '第3批｜優良級（9名）', rank: '優良級', town: '南投市', org: '室內空氣品質標章・優良級', name: '南投市漳和公辦民營托嬰中心', rep: '賴羽晴 / 理事長', multi: '連領3獎', seatRow: 5, seatCol: 3, seatLabel: '右2區・第5排第3格' },
+  { id: 'q-19',    cat: 'iaq', batch: '第3批｜優良級（9名）', rank: '優良級', town: '草屯鎮', org: '室內空氣品質標章・優良級', name: '青松長照社團法人附設南投縣私立草屯新豐住宿長照機構', rep: '陳亮勝 / 主任', multi: '', seatRow: 4, seatCol: 3, seatLabel: '右2區・第4排第3格' },
+  { id: 'q-20',    cat: 'iaq', batch: '第3批｜優良級（9名）', rank: '優良級', town: '埔里鎮', org: '室內空氣品質標章・優良級', name: '臺中榮民總醫院埔里分院', rep: '林祐儒 / 小姐', multi: '', seatRow: 3, seatCol: 3, seatLabel: '右2區・第3排第3格' },
+  { id: 'q-21',    cat: 'iaq', batch: '第3批｜優良級（9名）', rank: '優良級', town: '草屯鎮', org: '室內空氣品質標章・優良級', name: '南開科技大學', rep: '趙苡晟 / 專案助理', multi: '兼綠色採購代表', seatRow: 2, seatCol: 3, seatLabel: '右2區・第2排第3格' },
+  { id: 'q-new-2', cat: 'iaq', batch: '第3批｜優良級（9名）', rank: '優良級', town: '', org: '室內空氣品質標章・優良級', name: '私立康能護理之家', rep: '現場代表', multi: '', seatRow: 1, seatCol: 2, seatLabel: '右2區・第1排第2格(最前)' },
+  { id: 'q-22',    cat: 'iaq', batch: '第3批｜優良級（9名）', rank: '優良級', town: '埔里鎮', org: '室內空氣品質標章・優良級', name: '埔基醫療財團法人附設愛蘭護理之家', rep: '會再安排（週一追蹤）', multi: '', seatRow: 5, seatCol: 2, seatLabel: '右2區・第5排第2格' },
+  { id: 'q-23',    cat: 'iaq', batch: '第3批｜優良級（9名）', rank: '優良級', town: '', org: '室內空氣品質標章・優良級', name: '安泰長照社團法人附設南投縣私立朝日住宿長照機構', rep: '周銘彥', multi: '', seatRow: 4, seatCol: 2, seatLabel: '右2區・第4排第2格' },
 
-  { id: 'q-24', cat: 'iaq', batch: '第4批｜良好級（第24～29名・6名）', rank: '良好級 #24', town: '草屯鎮', org: '室內空氣品質標章・良好級', name: '土城公辦民營托嬰中心', rep: '賴羽晴 / 理事長', multi: '連領3獎(#18/#24/#25)' },
-  { id: 'q-25', cat: 'iaq', batch: '第4批｜良好級（第24～29名・6名）', rank: '良好級 #25', town: '南投市', org: '室內空氣品質標章・良好級', name: '南投市公辦民營托嬰中心', rep: '賴羽晴 / 理事長', multi: '連領3獎(#18/#24/#25)' },
-  { id: 'q-26', cat: 'iaq', batch: '第4批｜良好級（第24～29名・6名）', rank: '良好級 #26', town: '', org: '室內空氣品質標章・良好級', name: '私立永安護理之家', rep: '代表出席', multi: '' },
-  { id: 'q-27', cat: 'iaq', batch: '第4批｜良好級（第24～29名・6名）', rank: '良好級 #27', town: '草屯鎮', org: '室內空氣品質標章・良好級', name: '青松長照社團法人附設南投縣私立草屯青松住宿長照機構', rep: '林辰叡 / 主任', multi: '' },
-  { id: 'q-28', cat: 'iaq', batch: '第4批｜良好級（第24～29名・6名）', rank: '良好級 #28', town: '', org: '室內空氣品質標章・良好級', name: '南投縣私立博愛護理之家', rep: '謝小姐 / 行政代表', multi: '' },
-  { id: 'q-29', cat: 'iaq', batch: '第4批｜良好級（第24～29名・6名）', rank: '良好級 #29', town: '', org: '室內空氣品質標章・良好級', name: '財團法人利河伯社會福利基金會附設台灣省私立基督仁愛之家', rep: '陳喜信 / 總務', multi: '' }
+  // 第4批｜良好級（7名）
+  { id: 'q-24',    cat: 'iaq', batch: '第4批｜良好級（7名）', rank: '良好級', town: '草屯鎮', org: '室內空氣品質標章・良好級', name: '土城公辦民營托嬰中心', rep: '賴羽晴 / 理事長', multi: '連領3獎', seatRow: 2, seatCol: 2, seatLabel: '右2區・第2排第2格' },
+  { id: 'q-25',    cat: 'iaq', batch: '第4批｜良好級（7名）', rank: '良好級', town: '南投市', org: '室內空氣品質標章・良好級', name: '南投市公辦民營托嬰中心', rep: '賴羽晴 / 理事長', multi: '連領3獎', seatRow: 1, seatCol: 1, seatLabel: '右2區・第1排第1格(最前靠上台)' },
+  { id: 'q-26',    cat: 'iaq', batch: '第4批｜良好級（7名）', rank: '良好級', town: '', org: '室內空氣品質標章・良好級', name: '私立永安護理之家', rep: '代表出席', multi: '', seatRow: 5, seatCol: 1, seatLabel: '右2區・第5排第1格(最後靠上台)' },
+  { id: 'q-27',    cat: 'iaq', batch: '第4批｜良好級（7名）', rank: '良好級', town: '草屯鎮', org: '室內空氣品質標章・良好級', name: '青松長照社團法人附設南投縣私立草屯青松住宿長照機構', rep: '林辰叡 / 主任', multi: '', seatRow: 4, seatCol: 1, seatLabel: '右2區・第4排第1格(靠上台)' },
+  { id: 'q-28',    cat: 'iaq', batch: '第4批｜良好級（7名）', rank: '良好級', town: '', org: '室內空氣品質標章・良好級', name: '南投縣私立博愛護理之家', rep: '謝小姐 / 行政代表', multi: '', seatRow: 3, seatCol: 1, seatLabel: '右2區・第3排第1格(靠上台)' },
+  { id: 'q-new-4', cat: 'iaq', batch: '第4批｜良好級（7名）', rank: '良好級', town: '', org: '室內空氣品質標章・良好級', name: '新南投弘明幼兒園', rep: '現場代表', multi: '', seatRow: 3, seatCol: 2, seatLabel: '右2區・第3排第2格' },
+  { id: 'q-29',    cat: 'iaq', batch: '第4批｜良好級（7名）', rank: '良好級', town: '', org: '室內空氣品質標章・良好級', name: '財團法人利河伯社會福利基金會附設台灣省私立基督仁愛之家', rep: '陳喜信 / 總務', multi: '', seatRow: 2, seatCol: 1, seatLabel: '右2區・第2排第1格(靠上台)' }
 ];
 
 const DEFAULT_UNIT_MAP = Object.fromEntries(DEFAULT_UNITS.map(u => [u.id, u]));
@@ -1384,7 +1864,7 @@ const TIMELINE = [
  * 2. 狀態管理與 Google 試算表原子同步引擎
  * ============================================================================
  */
-const STORAGE_KEY = 'nantou_eco_award_115_v6';
+const STORAGE_KEY = 'nantou_eco_award_115_v7';
 const GAS_URL_KEY = 'nantou_eco_award_115_gas_url';
 const DEFAULT_GAS_URL = 'https://script.google.com/macros/s/AKfycbwkntJgqPBDLE_eJ50wzzi8PqTcYelMT2Xt91nQSlOEXmmi8--kwzgKA5Ew0qRhAR8p/exec';
 
@@ -1416,11 +1896,11 @@ function initApp() {
   const params = new URLSearchParams(window.location.search);
   const urlParam = params.get('gas') || params.get('sync');
   if (urlParam) {
-    localStorage.setItem(GAS_URL_KEY, urlParam.trim());
+    safeSetStorage('localStorage', GAS_URL_KEY, urlParam.trim());
   }
-  gasUrl = (localStorage.getItem(GAS_URL_KEY) || DEFAULT_GAS_URL).trim();
+  gasUrl = (safeGetStorage('localStorage', GAS_URL_KEY) || DEFAULT_GAS_URL).trim();
 
-  const saved = localStorage.getItem(STORAGE_KEY);
+  const saved = safeGetStorage('localStorage', STORAGE_KEY);
   if (saved) {
     try {
       appState = JSON.parse(saved);
@@ -1433,7 +1913,7 @@ function initApp() {
 
   const isIos = /iPhone|iPad|iPod/.test(navigator.userAgent);
   const isStandalone = window.navigator.standalone === true;
-  if (isIos && !isStandalone && !sessionStorage.getItem('hide_ios_banner')) {
+  if (isIos && !isStandalone && !safeGetStorage('sessionStorage', 'hide_ios_banner')) {
     document.getElementById('iosInstallBanner').classList.add('show');
   }
 
@@ -1456,8 +1936,33 @@ function buildDefaultState() {
   saveLocalOnly();
 }
 
+function safeGetStorage(type, key) {
+  try {
+    return window[type].getItem(key);
+  } catch (e) {
+    return null;
+  }
+}
+
+function safeSetStorage(type, key, val) {
+  try {
+    window[type].setItem(key, val);
+  } catch (e) {
+    // 忽略私密瀏覽或容量限制錯誤
+  }
+}
+
+function escapeHtml(str) {
+  return String(str || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 function saveLocalOnly() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
+  safeSetStorage('localStorage', STORAGE_KEY, JSON.stringify(appState));
 }
 
 function setConnDotState(state) {
@@ -1526,7 +2031,7 @@ async function pullFromGoogleSheet() {
     let nextUnits = data.units;
     const nextVips = data.vips || {};
 
-    // 補齊預設代表人姓名、解析雲端更新的代表姓名，並帶入跨獎提醒標籤
+    // 補齊預設代表人姓名、跨獎提醒與座位座標（無需更動試算表欄位）
     nextUnits = nextUnits.map(u => {
       const def = DEFAULT_UNIT_MAP[u.id] || {};
       let rawNote = String(u.note || '');
@@ -1540,32 +2045,28 @@ async function pullFromGoogleSheet() {
         ...u,
         rep: resolvedRep,
         multi: def.multi || '',
+        seatRow: def.seatRow || 0,
+        seatCol: def.seatCol || 0,
+        seatLabel: def.seatLabel || '',
         note: rawNote
       };
     });
 
-    // 若雲端試算表仍含舊版佔位資料，自動升級為完整 78 筆真實受獎名單
-    const hasPlaceholder = nextUnits.some(u =>
-      (u.name || '').includes('受獎單位 #') ||
-      (u.name || '').includes('綠色採購績優單位 #') ||
-      (u.name || '').includes('機車排氣檢驗站 #') ||
-      (u.name || '').includes('簡訊收集績優站 #') ||
-      (u.name || '').includes('定檢率提升績優站 #') ||
-      (u.name || '').includes('室內空品優良單位 #') ||
-      (u.name || '').includes('室內空品良好單位 #')
-    );
+    // 若雲端試算表尚未對齊最新 84 席座位表名單，自動保留既有簽到狀態並升級至 84 席
+    const needsSeatingSync = nextUnits.length !== DEFAULT_UNITS.length ||
+      !nextUnits.some(u => u.id === 'g-new-1') ||
+      !nextUnits.some(u => u.id === 'q-new-1');
 
-    if (hasPlaceholder) {
+    if (needsSeatingSync) {
       const statusCache = Object.fromEntries(nextUnits.map(u => [u.id, u]));
       const upgradedUnits = DEFAULT_UNITS.map(def => {
         const old = statusCache[def.id];
-        const keepOld = old && !['green', 'moto', 'iaq'].includes(def.cat);
         return {
           ...def,
-          status: keepOld ? (old.status || 'none') : 'none',
-          isProxy: keepOld ? !!old.isProxy : false,
-          note: keepOld ? (old.note || '') : '',
-          gift: keepOld ? !!old.gift : false
+          status: old ? (old.status || 'none') : 'none',
+          isProxy: old ? !!old.isProxy : false,
+          note: old ? (old.note || '') : '',
+          gift: old ? !!old.gift : false
         };
       });
       appState.units = upgradedUnits;
@@ -1581,7 +2082,13 @@ async function pullFromGoogleSheet() {
       return;
     }
 
-    const isSameUnits = JSON.stringify(appState.units) === JSON.stringify(nextUnits);
+    const normalizeUnitForDiff = u => ({
+      id: u.id, cat: u.cat, batch: u.batch, rank: u.rank,
+      town: u.town || '', org: u.org || '', name: u.name || '',
+      status: u.status || 'none', isProxy: !!u.isProxy,
+      note: u.note || '', gift: !!u.gift, rep: u.rep || ''
+    });
+    const isSameUnits = JSON.stringify(appState.units.map(normalizeUnitForDiff)) === JSON.stringify(nextUnits.map(normalizeUnitForDiff));
     const isSameVips = JSON.stringify(appState.vips) === JSON.stringify(nextVips);
 
     setConnDotState('online');
@@ -1599,7 +2106,7 @@ async function pullFromGoogleSheet() {
 }
 
 function dismissIosBanner() {
-  sessionStorage.setItem('hide_ios_banner', '1');
+  safeSetStorage('sessionStorage', 'hide_ios_banner', '1');
   document.getElementById('iosInstallBanner').classList.remove('show');
 }
 
@@ -1875,6 +2382,272 @@ function saveUnitEdit(evt) {
   });
 }
 
+function openSeatModal(unitId) {
+  const target = appState.units.find(x => x.id === unitId);
+  if (!target) return;
+  const cat = CATEGORIES[target.cat] || CATEGORIES.toilet;
+  const catUnits = appState.units.filter(x => x.cat === target.cat);
+
+  document.getElementById('seatModalTitle').textContent = `🪑 ${cat.name}｜座位位置圖`;
+  document.getElementById('seatModalInfo').innerHTML = `
+    🎯 目標單位：<b>${target.name}</b><br>
+    📍 座標位置：<b>${target.seatLabel || cat.zone}</b>（點擊其他格可查看鄰座）
+  `;
+
+  // 建立 Row (由後排 rows 往第1排 1 繪製，下方緊鄰舞台，與實體空間及座位表PDF方向完全一致)
+  const cellsHtml = [];
+  for (let r = cat.rows; r >= 1; r--) {
+    for (let c = 1; c <= cat.cols; c++) {
+      const occupant = catUnits.find(u => u.seatRow === r && u.seatCol === c);
+      if (!occupant) {
+        cellsHtml.push(`<div class="seat-cell is-empty"><span class="seat-row-tag">第${r}排</span>空位</div>`);
+      } else {
+        const isTarget = occupant.id === target.id;
+        const isSeated = ['seated', 'stage', 'done'].includes(occupant.status);
+        const shortName = occupant.name.replace(/^南投縣/, '').replace(/股份有限公司|醫療社團法人|醫療財團法人|社團法人/g, '');
+        cellsHtml.push(`
+          <div class="seat-cell ${isTarget ? 'is-target' : ''} ${isSeated ? 'is-seated' : ''}"
+            onclick="openSeatModal('${occupant.id}')">
+            <span class="seat-row-tag">${isTarget ? '📍 這裡' : `第${r}排`}</span>
+            <div>${shortName}</div>
+          </div>
+        `);
+      }
+    }
+  }
+
+  const minGridW = cat.cols >= 7 ? '540px' : (cat.cols >= 5 ? '420px' : '100%');
+  document.getElementById('seatModalBody').innerHTML = `
+    <div style="font-size:11px;color:#94A3B8;font-weight:800;margin-bottom:6px;display:flex;justify-content:space-between;">
+      <span>⬆️ 廳內後方</span>
+      <span>區域：${cat.zone}</span>
+    </div>
+    <div class="seat-grid-scroll">
+      <div class="seat-matrix" style="grid-template-columns: repeat(${cat.cols}, minmax(0, 1fr));min-width:${minGridW};">
+        ${cellsHtml.join('')}
+      </div>
+    </div>
+    <div class="seat-stage-bar">
+      <span>⬇️ 上台方向</span>
+      <span>🎭 舞 台（第1排最靠近舞台）</span>
+      <span>⬆️ 下台方向</span>
+    </div>
+  `;
+
+  document.getElementById('seatModal').classList.add('show');
+}
+
+function closeSeatModal() {
+  document.getElementById('seatModal').classList.remove('show');
+}
+
+let fseatState = {
+  filterCat: 'all',
+  search: '',
+  birdEye: false,
+  selectedId: null
+};
+
+function openVenueModal(preselectUnitId = null) {
+  if (preselectUnitId) {
+    fseatState.selectedId = preselectUnitId;
+  }
+  renderDetailedSeatingChart();
+  document.getElementById('venueModal').classList.add('show');
+}
+
+function closeVenueModal() {
+  document.getElementById('venueModal').classList.remove('show');
+}
+
+function toggleFseatZoom() {
+  fseatState.birdEye = !fseatState.birdEye;
+  const vp = document.getElementById('fseatViewport');
+  const btn = document.getElementById('fseatZoomBtn');
+  if (vp) vp.classList.toggle('zoom-bird', fseatState.birdEye);
+  if (btn) btn.textContent = fseatState.birdEye ? '🔍 放大閱讀' : '🔭 鳥瞰全覽';
+}
+
+function handleFseatSearch(val) {
+  fseatState.search = val;
+  const clr = document.getElementById('fseatSearchClear');
+  if (clr) clr.style.display = val ? 'inline-flex' : 'none';
+  renderDetailedSeatingChart();
+
+  if (val.trim()) {
+    setTimeout(() => {
+      const firstMatch = document.querySelector('#fseatCanvas .dseat-cell.is-match');
+      if (firstMatch) {
+        firstMatch.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+      }
+    }, 50);
+  }
+}
+
+function clearFseatSearch() {
+  fseatState.search = '';
+  const inp = document.getElementById('fseatSearchInput');
+  const clr = document.getElementById('fseatSearchClear');
+  if (inp) inp.value = '';
+  if (clr) clr.style.display = 'none';
+  renderDetailedSeatingChart();
+}
+
+function selectFseatUnit(unitId) {
+  fseatState.selectedId = (fseatState.selectedId === unitId) ? null : unitId;
+  renderDetailedSeatingChart();
+}
+
+function renderZoneMatrixHtml(catId) {
+  const cat = CATEGORIES[catId];
+  const catUnits = appState.units.filter(u => u.cat === catId);
+  const kw = (fseatState.search || '').trim().toLowerCase();
+  const isDimmed = fseatState.filterCat !== 'all' && fseatState.filterCat !== catId;
+  const seatedCnt = catUnits.filter(u => ['seated', 'stage', 'done'].includes(u.status)).length;
+
+  const cells = [];
+  for (let r = cat.rows; r >= 1; r--) {
+    for (let c = 1; c <= cat.cols; c++) {
+      const u = catUnits.find(x => x.seatRow === r && x.seatCol === c);
+      if (!u) {
+        cells.push(`<div class="dseat-cell is-empty">空位</div>`);
+      } else {
+        const isMatch = kw && [u.name, u.rep, u.town, u.rank, u.seatLabel].join(' ').toLowerCase().includes(kw);
+        const isSel = fseatState.selectedId === u.id;
+        const shortName = u.name
+          .replace(/^南投縣/, '')
+          .replace(/股份有限公司|醫療社團法人|醫療財團法人|社團法人/g, '');
+        const shortRep = (u.rep || '').split('/')[0].replace(/（.*?）/g, '').trim();
+
+        cells.push(`
+          <div class="dseat-cell st-${u.status} ${isMatch ? 'is-match' : ''} ${isSel ? 'is-selected' : ''}"
+            onclick="selectFseatUnit('${u.id}')">
+            <div class="dseat-top">
+              <span class="dseat-pos">${r}-${c}</span>
+              <span class="dseat-rank">${u.rank}</span>
+            </div>
+            <div class="dseat-name">${shortName}</div>
+            <div class="dseat-rep">${shortRep ? `👤${shortRep}` : ''}</div>
+          </div>
+        `);
+      }
+    }
+  }
+
+  return `
+    <div class="zone-box ${isDimmed ? 'is-dimmed' : ''}" style="border-color:${cat.color};">
+      <div class="zone-box-title" style="background:${cat.color};">
+        <span>${cat.icon} ${cat.name}（${cat.lead}）</span>
+        <span>就位 ${seatedCnt}/${catUnits.length}</span>
+      </div>
+      <div class="dseat-grid" style="--cols:${cat.cols};grid-template-columns: repeat(${cat.cols}, 102px);">
+        ${cells.join('')}
+      </div>
+    </div>
+  `;
+}
+
+function renderDetailedSeatingChart() {
+  const filterRow = document.getElementById('fseatFilterRow');
+  if (filterRow) {
+    filterRow.innerHTML = [
+      `<button class="cat-pill ${fseatState.filterCat === 'all' ? 'active' : ''}" style="padding:4px 10px;font-size:11px;${fseatState.filterCat === 'all' ? 'background:#FACC15;' : ''}" onclick="fseatState.filterCat='all';renderDetailedSeatingChart()">全場 (${appState.units.length})</button>`,
+      ...Object.values(CATEGORIES).map(c => {
+        const active = fseatState.filterCat === c.id;
+        return `<button class="cat-pill ${active ? 'active' : ''}" style="padding:4px 10px;font-size:11px;${active ? `background:${c.color};` : ''}" onclick="fseatState.filterCat='${c.id}';renderDetailedSeatingChart()">${c.icon} ${c.name}</button>`;
+      })
+    ].join('');
+  }
+
+  const canvas = document.getElementById('fseatCanvas');
+  if (canvas) {
+    canvas.innerHTML = `
+      <!-- 左1區 -->
+      <div class="hall-col">
+        <div class="hall-col-header">左1區（靠上台走道）</div>
+        <div class="static-hall-block" style="background:#334155;color:#F8FAFC;">📷 攝影組 預留區</div>
+        ${renderZoneMatrixHtml('moto')}
+        ${renderZoneMatrixHtml('toilet')}
+        <div class="static-hall-block" style="background:#F472B6;color:#090E14;cursor:pointer;" onclick="closeVenueModal();quickSwitchRole('vip')">
+          👑 長官、貴賓保留席（最前排）
+        </div>
+      </div>
+
+      <div class="hall-aisle">走道</div>
+
+      <!-- 左2區 -->
+      <div class="hall-col">
+        <div class="hall-col-header">左2區（中央偏左）</div>
+        ${renderZoneMatrixHtml('green')}
+        ${renderZoneMatrixHtml('clean')}
+      </div>
+
+      <div class="hall-aisle">走道</div>
+
+      <!-- 右2區 -->
+      <div class="hall-col">
+        <div class="hall-col-header">右2區（左1欄良好級・右6欄優良級）</div>
+        ${renderZoneMatrixHtml('iaq')}
+      </div>
+
+      <div class="hall-aisle">走道</div>
+
+      <!-- 右1區 -->
+      <div class="hall-col" style="min-width:110px;">
+        <div class="hall-col-header">右1區</div>
+        <div class="static-hall-block" style="flex:1;background:#334155;color:#CBD5E1;display:flex;align-items:center;justify-content:center;writing-mode:vertical-rl;letter-spacing:8px;font-size:15px;">
+          👥 觀禮區
+        </div>
+      </div>
+    `;
+  }
+
+  // 更新底部選取座位操作列
+  const inspector = document.getElementById('fseatInspector');
+  if (!inspector) return;
+  const sel = appState.units.find(x => x.id === fseatState.selectedId);
+  if (!sel) {
+    inspector.style.display = 'none';
+    return;
+  }
+
+  const cat = CATEGORIES[sel.cat] || CATEGORIES.toilet;
+  const st = STATUS_META[sel.status] || STATUS_META.none;
+  let quickBtn = '';
+  if (sel.status === 'none' || sel.status === 'checked') {
+    quickBtn = `<button class="toon-btn" style="background:#4ADE80;color:var(--ink);padding:7px 10px;font-size:12px;" onclick="setUnitDirectStatus(event, '${sel.id}', 'seated', '💺 SEATED!', '#4ADE80')">💺 確認入座</button>`;
+  } else if (sel.status === 'seated') {
+    quickBtn = `<button class="toon-btn" style="background:#FACC15;color:var(--ink);padding:7px 10px;font-size:12px;" onclick="setUnitDirectStatus(event, '${sel.id}', 'stage', '🌟 READY!', '#FACC15')">🌟 舞台預備</button>`;
+  } else if (sel.status === 'stage') {
+    quickBtn = `<button class="toon-btn" style="background:#A3E635;color:var(--ink);padding:7px 10px;font-size:12px;" onclick="setUnitDirectStatus(event, '${sel.id}', 'done', '🏆 CLEAR!', '#A3E635')">🏆 完成領獎</button>`;
+  } else {
+    quickBtn = `<button class="toon-btn" style="background:#334155;color:#FFF;padding:7px 10px;font-size:12px;" onclick="setUnitDirectStatus(event, '${sel.id}', 'seated', '↩️ 已還原入座', '#4ADE80')">↩️ 還原</button>`;
+  }
+
+  inspector.style.display = 'flex';
+  inspector.innerHTML = `
+    <div style="min-width:0;">
+      <div style="font-size:11px;font-weight:900;color:${cat.color};">
+        ${cat.icon} ${sel.seatLabel}・<span style="background:${st.bg};color:#090E14;padding:1px 6px;border-radius:5px;">${st.label}</span>
+      </div>
+      <div style="font-size:14px;font-weight:900;color:#FFF;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${sel.name}</div>
+      ${sel.rep ? `<div style="font-size:11px;color:#BAE6FD;font-weight:800;">👤 ${sel.rep}</div>` : ''}
+    </div>
+    <div style="display:flex;gap:6px;flex:0 0 auto;">
+      ${quickBtn}
+      <button class="toon-btn" style="background:#334155;color:#FFF;padding:7px 9px;font-size:12px;" onclick="openEditModal('${sel.id}')">✏️</button>
+    </div>
+  `;
+}
+
+function jumpToUsherCat(catId) {
+  closeVenueModal();
+  uiState.tab = 'usher';
+  uiState.usherCat = catId;
+  renderAll();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
 function closeEditModal() {
   document.getElementById('editModal').classList.remove('show');
 }
@@ -1885,7 +2658,7 @@ function closeEditModal() {
  * ============================================================================
  */
 function handleGearClick() {
-  if (sessionStorage.getItem('settings_unlocked') === '1') {
+  if (safeGetStorage('sessionStorage', 'settings_unlocked') === '1') {
     openSettings();
     return;
   }
@@ -1898,7 +2671,7 @@ function handleGearClick() {
 function verifyAdminPwd() {
   const val = document.getElementById('adminPwdInput').value.trim();
   if (val === ADMIN_PASS) {
-    sessionStorage.setItem('settings_unlocked', '1');
+    safeSetStorage('sessionStorage', 'settings_unlocked', '1');
     closePwdModal();
     openSettings();
   } else {
@@ -1924,7 +2697,7 @@ function closeSettings() {
 async function saveGasUrl() {
   const inputVal = document.getElementById('gasUrlInput').value.trim();
   gasUrl = inputVal || DEFAULT_GAS_URL;
-  localStorage.setItem(GAS_URL_KEY, gasUrl);
+  safeSetStorage('localStorage', GAS_URL_KEY, gasUrl);
   closeSettings();
   setupGasSync();
   spawnComicBurst(null, '🔗 SYNCED!', '#38BDF8');
@@ -2005,6 +2778,10 @@ function renderAll() {
     lobbyEl.classList.add('hidden');
     workEl.classList.remove('hidden');
     renderWorkspace();
+  }
+  const vModal = document.getElementById('venueModal');
+  if (vModal && vModal.classList.contains('show')) {
+    renderDetailedSeatingChart();
   }
 }
 
@@ -2101,12 +2878,13 @@ function updateTopStats() {
   const total = appState.units.length;
   const checked = appState.units.filter(u => u.status !== 'none').length;
   const seated = appState.units.filter(u => ['seated', 'stage', 'done'].includes(u.status)).length;
-  const proxy = appState.units.filter(u => u.isProxy || u.note).length;
+  const elTotal = document.getElementById('statTotal');
+  const elChecked = document.getElementById('statChecked');
+  const elSeated = document.getElementById('statSeated');
 
-  document.getElementById('statTotal').textContent = total;
-  document.getElementById('statChecked').textContent = checked;
-  document.getElementById('statSeated').textContent = seated;
-  document.getElementById('statProxy').textContent = proxy;
+  if (elTotal) elTotal.textContent = total;
+  if (elChecked) elChecked.textContent = checked;
+  if (elSeated) elSeated.textContent = seated;
 }
 
 function renderUnitCard(u, mode = 'checkin', idx = 0, showCatBadge = false, seqNum = null) {
@@ -2214,7 +2992,8 @@ function renderUnitCard(u, mode = 'checkin', idx = 0, showCatBadge = false, seqN
     actionButtonsHtml = `
       ${stepBtn}
       ${undoBtn}
-      <button class="toon-btn edit-mini-btn" onclick="openEditModal('${u.id}')">✏️</button>
+      <button class="toon-btn edit-mini-btn" style="background:#312E81;color:#E0E7FF;" onclick="openSeatModal('${u.id}')" title="查看座位圖">🪑</button>
+      <button class="toon-btn edit-mini-btn" onclick="openEditModal('${u.id}')" title="編輯代表與備註">✏️</button>
     `;
   }
 
@@ -2224,6 +3003,7 @@ function renderUnitCard(u, mode = 'checkin', idx = 0, showCatBadge = false, seqN
         <div>
           <div class="unit-badges">
             ${(mode === 'usher' && seqNum) ? `<span class="tag" style="background:#FEF08A;">順序 #${seqNum}</span>` : ''}
+            ${(mode === 'usher' && u.seatLabel) ? `<span class="tag" style="background:#DDD6FE;">🪑 ${u.seatLabel}</span>` : ''}
             ${showCatBadge ? `<span class="tag" style="background:${cat.color};">${cat.icon} ${cat.name}</span>` : ''}
             <span class="tag ${rankClass}">${u.rank}</span>
             ${u.town ? `<span class="tag tag-town">📍 ${u.town}</span>` : ''}
@@ -2233,10 +3013,10 @@ function renderUnitCard(u, mode = 'checkin', idx = 0, showCatBadge = false, seqN
           <div class="unit-org">${u.org}</div>
           <div class="unit-name">${u.name}</div>
           ${(mode === 'usher' && u.rep) ? `<div style="margin-top:5px;display:flex;flex-wrap:wrap;align-items:center;gap:6px;">
-            <span style="font-size:12px;font-weight:900;color:${u.rep.includes('追蹤') || u.rep.includes('安排') ? '#FCA5A5' : '#BAE6FD'};">👤 代表：${u.rep}</span>
+            <span style="font-size:12px;font-weight:900;color:${u.rep.includes('追蹤') || u.rep.includes('安排') ? '#FCA5A5' : '#BAE6FD'};">👤 代表：${escapeHtml(u.rep)}</span>
             ${u.multi ? `<span style="font-size:10px;font-weight:900;background:#FDE047;color:#090E14;padding:1px 6px;border-radius:6px;border:1.5px solid #090E14;">🔁 ${u.multi}</span>` : ''}
           </div>` : ''}
-          ${u.note ? `<div style="margin-top:5px;font-size:12px;font-weight:800;color:#FDE047;">💬 現場備註：${u.note}</div>` : ''}
+          ${u.note ? `<div style="margin-top:5px;font-size:12px;font-weight:800;color:#FDE047;">💬 現場備註：${escapeHtml(u.note)}</div>` : ''}
         </div>
         <div class="stamp" style="background:${st.bg};">${st.label}</div>
       </div>
@@ -2252,7 +3032,7 @@ function renderCheckinView() {
   const kw = uiState.search.toLowerCase();
   const filtered = appState.units.filter(u => {
     const matchCat = uiState.catFilter === 'all' || u.cat === uiState.catFilter;
-    const matchKw = !kw || [u.name, u.rep, u.multi, u.org, u.town, u.note, u.rank].join(' ').toLowerCase().includes(kw);
+    const matchKw = !kw || [u.name, u.rep, u.multi, u.seatLabel, u.org, u.town, u.note, u.rank].join(' ').toLowerCase().includes(kw);
     return matchCat && matchKw;
   });
 
@@ -2295,7 +3075,9 @@ function renderUsherView() {
         <div style="font-size:12px;color:#CBD5E1;font-weight:700;">⏰ 頒獎時段：${curCat.time}</div>
         <div style="font-size:11px;color:#FDE047;font-weight:800;margin-top:3px;">📜 排列順序即為「上台唱名與遞獎順序（#1→#2…）」</div>
       </div>
-      <span class="tag" style="background:${curCat.color};">共 ${units.length} 名</span>
+      <button class="toon-btn" style="background:#DDD6FE;color:var(--ink);padding:6px 10px;font-size:12px;flex:0 0 auto;" onclick="openVenueModal()">
+        🗺️ 詳細座位表
+      </button>
     </div>
 
     ${batches.map(b => {
@@ -2366,7 +3148,7 @@ function renderStageView() {
               <div style="font-size:11px;color:#FDA4AF;font-weight:700;">
                 ${a.status === 'none' ? '❌ 尚未報到（請確認是否抽掉獎狀/手舉牌）' : ''}
                 ${a.isProxy ? '🔄 改由他人代領' : ''}
-                ${a.note ? `｜備註：${a.note}` : ''}
+                ${a.note ? `｜備註：${escapeHtml(a.note)}` : ''}
               </div>
             </div>
             <span class="tag" style="background:${a.status === 'none' ? '#FB7185' : '#FACC15'};color:${a.status === 'none' ? '#FFF' : '#090E14'};">
@@ -2387,7 +3169,7 @@ function renderStageView() {
           <div>
             <span style="font-size:12px;font-weight:900;color:#FACC15;">#${idx+1} [${u.rank}]</span>
             <div style="font-size:15px;font-weight:900;">${u.name}</div>
-            ${u.note ? `<div style="font-size:11px;color:#FDE047;font-weight:800;">💬 ${u.note}</div>` : ''}
+            ${u.note ? `<div style="font-size:11px;color:#FDE047;font-weight:800;">💬 ${escapeHtml(u.note)}</div>` : ''}
           </div>
           <span class="stamp" style="background:${(STATUS_META[u.status] || STATUS_META.none).bg};">${(STATUS_META[u.status] || STATUS_META.none).label}</span>
         </div>
