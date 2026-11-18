@@ -1086,23 +1086,98 @@
       transform-origin: top left;
     }
 
-    /* 鳥瞰縮小模式（相容 iOS Safari 捲動邊界） */
-    .fseat-viewport.zoom-bird .dseat-grid {
-      grid-template-columns: repeat(var(--cols, 2), 68px) !important;
+    /* 一屏全覽模式：免左右滑動，手機直向直接看完整場 4 大欄 78 席 */
+    .fseat-viewport.zoom-bird {
+      overflow-x: hidden;
+      padding: 5px;
+    }
+    .fseat-viewport.zoom-bird .fseat-hall-canvas {
+      width: 100%;
+      min-width: 0;
       gap: 3px;
     }
-    .fseat-viewport.zoom-bird .dseat-cell {
-      width: 68px;
-      min-height: 46px;
+    .fseat-viewport.zoom-bird .hall-col {
+      flex: 1 1 0;
+      min-width: 0;
       padding: 3px;
+      gap: 4px;
+      border-radius: 8px;
+      border-width: 1.5px;
+    }
+    .fseat-viewport.zoom-bird .hall-col-header {
+      font-size: 9px;
+      padding: 2px 1px;
+      border-width: 1.5px;
+      border-radius: 5px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .fseat-viewport.zoom-bird .hall-aisle {
+      width: 10px;
+      flex: 0 0 10px;
+      font-size: 7px;
+      letter-spacing: 0;
+      border-width: 1px;
+      border-radius: 4px;
+    }
+    .fseat-viewport.zoom-bird .zone-box {
+      padding: 2px;
+      border-width: 1.5px;
+      border-radius: 6px;
+    }
+    .fseat-viewport.zoom-bird .zone-box-title {
+      font-size: 8.5px;
+      padding: 1px 3px;
+      margin-bottom: 2px;
+      border-width: 1px;
+      border-radius: 4px;
+    }
+    .fseat-viewport.zoom-bird .zone-box-title span:last-child {
+      font-size: 7.5px;
+    }
+    .fseat-viewport.zoom-bird .dseat-grid {
+      grid-template-columns: repeat(var(--cols, 5), minmax(0, 1fr)) !important;
+      gap: 2px;
+    }
+    .fseat-viewport.zoom-bird .dseat-cell {
+      width: 100%;
+      min-width: 0;
+      min-height: 29px;
+      padding: 1px 0;
+      border-width: 1.5px;
+      border-radius: 4px;
+      justify-content: center;
     }
     .fseat-viewport.zoom-bird .dseat-name {
-      font-size: 9px;
-      line-height: 1.15;
+      font-size: 7.5px;
+      line-height: 1.06;
+      letter-spacing: -0.5px;
+      margin: 0;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
     }
+    .fseat-viewport.zoom-bird .dseat-top,
     .fseat-viewport.zoom-bird .dseat-rep,
     .fseat-viewport.zoom-bird .dseat-rank {
       display: none;
+    }
+    .fseat-viewport.zoom-bird .dseat-cell.is-empty {
+      font-size: 7px;
+    }
+    .fseat-viewport.zoom-bird .static-hall-block {
+      font-size: 8.5px;
+      padding: 4px 2px;
+      border-width: 1.5px;
+      border-radius: 6px;
+      line-height: 1.15;
+    }
+    .fseat-viewport.zoom-bird .aud-right-col {
+      writing-mode: vertical-rl !important;
+      letter-spacing: 2px !important;
+      font-size: 10px !important;
     }
 
     .hall-col {
@@ -1466,7 +1541,7 @@
         </button>
 
         <div class="hud-compact-stats">
-          <span>報到 <b style="color:#38BDF8;" id="statChecked">0</b>/<span id="statTotal">84</span></span>
+          <span>報到 <b style="color:#38BDF8;" id="statChecked">0</b>/<span id="statTotal">78</span></span>
           <span>入座 <b style="color:#4ADE80;" id="statSeated">0</b></span>
         </div>
 
@@ -1549,10 +1624,10 @@
   <div id="venueModal" class="modal-backdrop" style="padding:8px;" onclick="if(event.target===this) closeVenueModal()">
     <div class="full-seat-modal-card">
       <div class="modal-title" style="margin-bottom:6px;flex:0 0 auto;">
-        <span style="font-size:15px;">🗺️ 7F放映廳・詳細座位表（全場84席）</span>
+        <span style="font-size:15px;">🗺️ 7F放映廳・詳細座位表（全場78席）</span>
         <div style="display:flex;gap:6px;align-items:center;">
           <button id="fseatZoomBtn" class="toon-btn" style="background:#38BDF8;color:var(--ink);padding:4px 9px;font-size:11px;" onclick="toggleFseatZoom()">
-            🔭 鳥瞰全覽
+            🔍 放大看字
           </button>
           <button class="toon-btn" style="background:#334155;color:#FFF;padding:4px 10px;" onclick="closeVenueModal()">✕</button>
         </div>
@@ -1574,11 +1649,11 @@
           <span><i class="legend-dot" style="background:#4ADE80;"></i>已入座</span>
           <span><i class="legend-dot" style="background:#FACC15;"></i>舞台預備</span>
           <span><i class="legend-dot" style="background:#141B24;"></i>已領獎</span>
-          <span style="margin-left:auto;color:#94A3B8;">👆 左右滑動查看四區・點擊座位可更新</span>
+          <span id="fseatLegendHint" style="margin-left:auto;color:#FDE047;">👆 點任一格看詳情・右上可放大看字</span>
         </div>
       </div>
 
-      <div id="fseatViewport" class="fseat-viewport">
+      <div id="fseatViewport" class="fseat-viewport zoom-bird">
         <div id="fseatCanvas" class="fseat-hall-canvas"></div>
       </div>
 
@@ -1709,11 +1784,11 @@ const ROLES = {
 };
 
 const CATEGORIES = {
-  toilet: { id: 'toilet', name: '績優公廁', icon: '🚽', color: '#38BDF8', lead: '皓幃', time: '14:35~14:50', countLabel: '9名',  cols: 2, rows: 5, zone: '左1區・長官後方' },
-  clean:  { id: 'clean',  name: '環境清潔', icon: '🧹', color: '#4ADE80', lead: '志偉', time: '14:50~15:05', countLabel: '15名', cols: 3, rows: 5, zone: '左2區・前段' },
-  green:  { id: 'green',  name: '綠色採購', icon: '🛍️', color: '#FB923C', lead: '宛君', time: '15:05~15:20', countLabel: '16名', cols: 5, rows: 4, zone: '左2區・清潔後方' },
-  moto:   { id: 'moto',   name: '機車排氣', icon: '🛵', color: '#2DD4BF', lead: '移污', time: '15:20~15:35', countLabel: '10名', cols: 2, rows: 5, zone: '左1區・公廁後方' },
-  iaq:    { id: 'iaq',    name: '室內空品', icon: '🍃', color: '#C084FC', lead: '空品', time: '15:35~15:55', countLabel: '34名', cols: 7, rows: 5, zone: '右2區・全區' }
+  toilet: { id: 'toilet', name: '績優公廁', icon: '🚽', color: '#38BDF8', lead: '皓幃', time: '14:35~14:50', countLabel: '9名',  cols: 5, rows: 2, zone: '第2欄(左中)・貴賓後方(2排)' },
+  clean:  { id: 'clean',  name: '環境清潔', icon: '🧹', color: '#4ADE80', lead: '志偉', time: '14:50~15:05', countLabel: '15名', cols: 5, rows: 3, zone: '第3欄(右中)・預留區後方(3排)' },
+  green:  { id: 'green',  name: '綠色採購', icon: '🛍️', color: '#FB923C', lead: '宛君', time: '15:05~15:20', countLabel: '15名', cols: 5, rows: 3, zone: '第2欄(左中)・公廁後方(3排)' },
+  moto:   { id: 'moto',   name: '機車排氣', icon: '🛵', color: '#2DD4BF', lead: '移污', time: '15:20~15:35', countLabel: '10名', cols: 5, rows: 2, zone: '第2欄(左中)・綠採後方(2排)' },
+  iaq:    { id: 'iaq',    name: '室內空品', icon: '🍃', color: '#C084FC', lead: '空品', time: '15:35~15:55', countLabel: '29名', cols: 5, rows: 6, zone: '第1欄(最左)・貴賓後方(6排)' }
 };
 
 const STATUS_META = {
@@ -1724,116 +1799,110 @@ const STATUS_META = {
   done:    { label: '已領獎', bg: '#94A3B8' }
 };
 
-// 嚴格依照「座位表.pdf」匯入（共84席：公廁9 + 清潔15 + 綠色採購16 + 機車10 + 室內空品34）
+// 嚴格依照最新實體座位表截圖匯入（共78席：公廁9 + 清潔15 + 綠色採購15 + 機車10 + 室內空品29，全數5欄橫排）
 const DEFAULT_UNITS = [
-  // === 1. 績優公廁 (9席 - 左1區 2欄×5排) ===
-  { id: 't-1', cat: 'toilet', batch: '第1組｜整潔美觀組（3名）', rank: '特優', town: '南投市', org: '交通部高速公路局中區養護工程分局', name: '南投服務區北棟及南棟公廁', rep: '呈核中（週一追蹤）', multi: '', seatRow: 4, seatCol: 2, seatLabel: '左1區・公廁第4排右' },
-  { id: 't-2', cat: 'toilet', batch: '第1組｜整潔美觀組（3名）', rank: '優等', town: '水里鄉', org: '交通部觀光署日月潭國家風景區管理處-車埕管理站', name: '車埕鐵道觀光小學堂 1F 公廁', rep: '涂振昇 / 秘書', multi: '日管處連領4獎', seatRow: 3, seatCol: 2, seatLabel: '左1區・公廁第3排右' },
-  { id: 't-3', cat: 'toilet', batch: '第1組｜整潔美觀組（3名）', rank: '優等', town: '魚池鄉', org: '交通部觀光署日月潭國家風景區管理處', name: '向山遊客中心公廁', rep: '涂振昇 / 秘書', multi: '日管處連領4獎', seatRow: 2, seatCol: 2, seatLabel: '左1區・公廁第2排右' },
+  // === 1. 績優公廁 (9席 - 第2欄[左中] 5欄×2排，第2排第5格空位) ===
+  { id: 't-1',    cat: 'toilet', batch: '第1組｜整潔美觀組（3名）', rank: '特優', town: '南投市', org: '交通部高速公路局中區養護工程分局', name: '南投服務區北棟及南棟公廁', rep: '呈核中（週一追蹤）', multi: '', seatRow: 1, seatCol: 3, seatLabel: '第2欄・公廁第1排第3格' },
+  { id: 't-2',    cat: 'toilet', batch: '第1組｜整潔美觀組（3名）', rank: '優等', town: '水里鄉', org: '交通部觀光署日月潭國家風景區管理處-車埕管理站', name: '車埕鐵道觀光小學堂 1F 公廁', rep: '涂振昇 / 秘書', multi: '日管處連領4獎', seatRow: 1, seatCol: 2, seatLabel: '第2欄・公廁第1排第2格' },
+  { id: 't-3',    cat: 'toilet', batch: '第1組｜整潔美觀組（3名）', rank: '優等', town: '魚池鄉', org: '交通部觀光署日月潭國家風景區管理處', name: '向山遊客中心公廁', rep: '涂振昇 / 秘書', multi: '日管處連領4獎', seatRow: 1, seatCol: 1, seatLabel: '第2欄・公廁第1排第1格(靠上台)' },
 
-  { id: 't-4', cat: 'toilet', batch: '第2組｜多元服務組（3名）', rank: '特優', town: '埔里鎮', org: '台灣中油股份有限公司-埔里加油站', name: '台灣中油埔里站公廁', rep: '戴哲夫 / 站長', multi: '', seatRow: 1, seatCol: 2, seatLabel: '左1區・公廁第1排右(最前)' },
-  { id: 't-5', cat: 'toilet', batch: '第2組｜多元服務組（3名）', rank: '優等', town: '魚池鄉', org: '交通部觀光署日月潭國家風景區管理處', name: '伊達邵遊客中心公廁', rep: '涂振昇 / 秘書', multi: '日管處連領4獎', seatRow: 2, seatCol: 1, seatLabel: '左1區・公廁第2排左(靠上台)' },
-  { id: 't-6', cat: 'toilet', batch: '第2組｜多元服務組（3名）', rank: '優等', town: '魚池鄉', org: '交通部觀光署日月潭國家風景區管理處-埔里管理站', name: '朝霧碼頭公廁', rep: '涂振昇 / 秘書', multi: '日管處連領4獎', seatRow: 1, seatCol: 1, seatLabel: '左1區・公廁第1排左(最前)' },
+  { id: 't-4',    cat: 'toilet', batch: '第2組｜多元服務組（3名）', rank: '特優', town: '埔里鎮', org: '台灣中油股份有限公司-埔里加油站', name: '台灣中油埔里站公廁', rep: '戴哲夫 / 站長', multi: '', seatRow: 2, seatCol: 1, seatLabel: '第2欄・公廁第2排第1格(靠上台)' },
+  { id: 't-5',    cat: 'toilet', batch: '第2組｜多元服務組（3名）', rank: '優等', town: '魚池鄉', org: '交通部觀光署日月潭國家風景區管理處', name: '伊達邵遊客中心公廁', rep: '涂振昇 / 秘書', multi: '日管處連領4獎', seatRow: 1, seatCol: 4, seatLabel: '第2欄・公廁第1排第4格' },
+  { id: 't-6',    cat: 'toilet', batch: '第2組｜多元服務組（3名）', rank: '優等', town: '魚池鄉', org: '交通部觀光署日月潭國家風景區管理處-埔里管理站', name: '朝霧碼頭公廁', rep: '涂振昇 / 秘書', multi: '日管處連領4獎', seatRow: 1, seatCol: 5, seatLabel: '第2欄・公廁第1排第5格(靠下台)' },
 
-  { id: 't-7', cat: 'toilet', batch: '第3組｜公共設施組（3名）', rank: '特優', town: '名間鄉', org: '交通部觀光署參山國家風景區管理處', name: '松柏嶺遊客中心公廁', rep: '廖錫標 / 副處長', multi: '', seatRow: 5, seatCol: 2, seatLabel: '左1區・公廁第5排右(最後)' },
-  { id: 't-8', cat: 'toilet', batch: '第3組｜公共設施組（3名）', rank: '優等', town: '竹山鎮', org: '杉林溪遊樂事業股份有限公司', name: '杉林溪紅樓公廁', rep: '李侑璘 / 工務部經理', multi: '兼領綠色採購', seatRow: 4, seatCol: 1, seatLabel: '左1區・公廁第4排左(靠上台)' },
-  { id: 't-9', cat: 'toilet', batch: '第3組｜公共設施組（3名）', rank: '優等', town: '集集鎮', org: '農業部生物多樣性研究所', name: '保育教育館 1F 公廁', rep: '承辦出差（週一追蹤）', multi: '', seatRow: 3, seatCol: 1, seatLabel: '左1區・公廁第3排左(靠上台)' },
+  { id: 't-7',    cat: 'toilet', batch: '第3組｜公共設施組（3名）', rank: '特優', town: '名間鄉', org: '交通部觀光署參山國家風景區管理處', name: '松柏嶺遊客中心公廁', rep: '廖錫標 / 副處長', multi: '', seatRow: 2, seatCol: 4, seatLabel: '第2欄・公廁第2排第4格' },
+  { id: 't-8',    cat: 'toilet', batch: '第3組｜公共設施組（3名）', rank: '優等', town: '竹山鎮', org: '杉林溪遊樂事業股份有限公司', name: '杉林溪紅樓公廁', rep: '李侑璘 / 工務部經理', multi: '兼領綠色採購', seatRow: 2, seatCol: 3, seatLabel: '第2欄・公廁第2排第3格' },
+  { id: 't-jiji', cat: 'toilet', batch: '第3組｜公共設施組（3名）', rank: '優等', town: '集集鎮', org: '集集鎮公所', name: '集集鎮公所公廁', rep: '黃承哲 / 隊長', multi: '兼領清潔考核', seatRow: 2, seatCol: 2, seatLabel: '第2欄・公廁第2排第2格' },
 
-  // === 2. 環境清潔考核 (15席 - 左2區前段 3欄×5排) ===
-  { id: 'c-1',  cat: 'clean', batch: '第1批｜鄉鎮市公所第一組（2名）', rank: '第一名', town: '草屯鎮', org: '環境清潔考核・鄉鎮市公所第一組', name: '南投縣草屯鎮公所', rep: '週一追蹤', multi: '', seatRow: 5, seatCol: 3, seatLabel: '左2區・第5排右(公所欄)' },
-  { id: 'c-2',  cat: 'clean', batch: '第1批｜鄉鎮市公所第一組（2名）', rank: '第二名', town: '南投市', org: '環境清潔考核・鄉鎮市公所第一組', name: '南投縣南投市公所', rep: '林晉毅 / 隊長', multi: '', seatRow: 4, seatCol: 3, seatLabel: '左2區・第4排右(公所欄)' },
+  // === 2. 環境清潔考核 (15席 - 第3欄[右中] 5欄×3排) ===
+  { id: 'c-1',  cat: 'clean', batch: '第1批｜鄉鎮市公所第一組（2名）', rank: '第一名', town: '草屯鎮', org: '環境清潔考核・鄉鎮市公所第一組', name: '南投縣草屯鎮公所', rep: '週一追蹤', multi: '', seatRow: 1, seatCol: 2, seatLabel: '第3欄・清潔第1排第2格' },
+  { id: 'c-2',  cat: 'clean', batch: '第1批｜鄉鎮市公所第一組（2名）', rank: '第二名', town: '南投市', org: '環境清潔考核・鄉鎮市公所第一組', name: '南投縣南投市公所', rep: '林晉毅 / 隊長', multi: '', seatRow: 1, seatCol: 1, seatLabel: '第3欄・清潔第1排第1格(靠上台)' },
 
-  { id: 'c-3',  cat: 'clean', batch: '第2批｜鄉鎮市公所第二組（3名）', rank: '第一名', town: '集集鎮', org: '環境清潔考核・鄉鎮市公所第二組', name: '南投縣集集鎮公所', rep: '黃承哲 / 隊長', multi: '', seatRow: 3, seatCol: 3, seatLabel: '左2區・第3排右(公所欄)' },
-  { id: 'c-4',  cat: 'clean', batch: '第2批｜鄉鎮市公所第二組（3名）', rank: '第二名', town: '仁愛鄉', org: '環境清潔考核・鄉鎮市公所第二組', name: '南投縣仁愛鄉公所', rep: '王智璇', multi: '', seatRow: 2, seatCol: 3, seatLabel: '左2區・第2排右(公所欄)' },
-  { id: 'c-5',  cat: 'clean', batch: '第2批｜鄉鎮市公所第二組（3名）', rank: '第三名', town: '國姓鄉', org: '環境清潔考核・鄉鎮市公所第二組', name: '南投縣國姓鄉公所', rep: '邱美玲 / 鄉長', multi: '兼貴賓身分', seatRow: 1, seatCol: 3, seatLabel: '左2區・第1排右(最前)' },
+  { id: 'c-3',  cat: 'clean', batch: '第2批｜鄉鎮市公所第二組（3名）', rank: '第一名', town: '集集鎮', org: '環境清潔考核・鄉鎮市公所第二組', name: '南投縣集集鎮公所', rep: '黃承哲 / 隊長', multi: '兼領績優公廁', seatRow: 1, seatCol: 5, seatLabel: '第3欄・清潔第1排第5格(靠下台)' },
+  { id: 'c-4',  cat: 'clean', batch: '第2批｜鄉鎮市公所第二組（3名）', rank: '第二名', town: '仁愛鄉', org: '環境清潔考核・鄉鎮市公所第二組', name: '南投縣仁愛鄉公所', rep: '王智璇', multi: '', seatRow: 1, seatCol: 4, seatLabel: '第3欄・清潔第1排第4格' },
+  { id: 'c-5',  cat: 'clean', batch: '第2批｜鄉鎮市公所第二組（3名）', rank: '第三名', town: '國姓鄉', org: '環境清潔考核・鄉鎮市公所第二組', name: '南投縣國姓鄉公所', rep: '邱美玲 / 鄉長', multi: '兼貴賓身分', seatRow: 1, seatCol: 3, seatLabel: '第3欄・清潔第1排第3格' },
 
-  { id: 'c-6',  cat: 'clean', batch: '第3批｜村里社區 6-10名（5名・先上台）', rank: '第六名', town: '草屯鎮', org: '環境清潔考核・村(里)、社區組', name: '南投縣草屯鎮中山里', rep: '週一追蹤', multi: '', seatRow: 5, seatCol: 1, seatLabel: '左2區・第5排左(靠上台)' },
-  { id: 'c-7',  cat: 'clean', batch: '第3批｜村里社區 6-10名（5名・先上台）', rank: '第七名', town: '南投市', org: '環境清潔考核・村(里)、社區組', name: '南投縣南投市社團法人南投縣慈慧善行協會', rep: '洪玉琳 / 志工隊隊長', multi: '', seatRow: 4, seatCol: 1, seatLabel: '左2區・第4排左(靠上台)' },
-  { id: 'c-8',  cat: 'clean', batch: '第3批｜村里社區 6-10名（5名・先上台）', rank: '第八名', town: '集集鎮', org: '環境清潔考核・村(里)、社區組', name: '南投縣集集鎮集集社區發展協會', rep: '黃南珍 / 理事長', multi: '', seatRow: 3, seatCol: 1, seatLabel: '左2區・第3排左(靠上台)' },
-  { id: 'c-9',  cat: 'clean', batch: '第3批｜村里社區 6-10名（5名・先上台）', rank: '第九名', town: '鹿谷鄉', org: '環境清潔考核・村(里)、社區組', name: '南投縣鹿谷鄉竹林村', rep: '劉孟筑 / 清潔隊長', multi: '', seatRow: 2, seatCol: 1, seatLabel: '左2區・第2排左(靠上台)' },
-  { id: 'c-10', cat: 'clean', batch: '第3批｜村里社區 6-10名（5名・先上台）', rank: '第十名', town: '草屯鎮', org: '環境清潔考核・村(里)、社區組', name: '南投縣草屯鎮玉峰里', rep: '週一追蹤', multi: '', seatRow: 1, seatCol: 1, seatLabel: '左2區・第1排左(最前)' },
+  { id: 'c-6',  cat: 'clean', batch: '第3批｜村里社區 6-10名（5名・先上台）', rank: '第六名', town: '草屯鎮', org: '環境清潔考核・村(里)、社區組', name: '南投縣草屯鎮中山里', rep: '週一追蹤', multi: '', seatRow: 2, seatCol: 5, seatLabel: '第3欄・清潔第2排第5格(靠下台)' },
+  { id: 'c-7',  cat: 'clean', batch: '第3批｜村里社區 6-10名（5名・先上台）', rank: '第七名', town: '南投市', org: '環境清潔考核・村(里)、社區組', name: '南投縣南投市社團法人南投縣慈慧善行協會', rep: '洪玉琳 / 志工隊隊長', multi: '', seatRow: 2, seatCol: 4, seatLabel: '第3欄・清潔第2排第4格' },
+  { id: 'c-8',  cat: 'clean', batch: '第3批｜村里社區 6-10名（5名・先上台）', rank: '第八名', town: '集集鎮', org: '環境清潔考核・村(里)、社區組', name: '南投縣集集鎮集集社區發展協會', rep: '黃南珍 / 理事長', multi: '', seatRow: 2, seatCol: 3, seatLabel: '第3欄・清潔第2排第3格' },
+  { id: 'c-9',  cat: 'clean', batch: '第3批｜村里社區 6-10名（5名・先上台）', rank: '第九名', town: '鹿谷鄉', org: '環境清潔考核・村(里)、社區組', name: '南投縣鹿谷鄉竹林村', rep: '劉孟筑 / 清潔隊長', multi: '', seatRow: 2, seatCol: 2, seatLabel: '第3欄・清潔第2排第2格' },
+  { id: 'c-10', cat: 'clean', batch: '第3批｜村里社區 6-10名（5名・先上台）', rank: '第十名', town: '草屯鎮', org: '環境清潔考核・村(里)、社區組', name: '南投縣草屯鎮玉峰里', rep: '週一追蹤', multi: '', seatRow: 2, seatCol: 1, seatLabel: '第3欄・清潔第2排第1格(靠上台)' },
 
-  { id: 'c-11', cat: 'clean', batch: '第4批｜村里社區 1-5名（5名・後上台）', rank: '第一名', town: '仁愛鄉', org: '環境清潔考核・村(里)、社區組', name: '南投縣仁愛鄉大同村(壽亭新村)', rep: '謝戎彥 / 村長', multi: '同梯連領2獎(#1/#4)', seatRow: 5, seatCol: 2, seatLabel: '左2區・第5排中' },
-  { id: 'c-12', cat: 'clean', batch: '第4批｜村里社區 1-5名（5名・後上台）', rank: '第二名', town: '水里鄉', org: '環境清潔考核・村(里)、社區組', name: '南投縣水里鄉車埕村', rep: '陳美璇 / 職代', multi: '', seatRow: 4, seatCol: 2, seatLabel: '左2區・第4排中' },
-  { id: 'c-13', cat: 'clean', batch: '第4批｜村里社區 1-5名（5名・後上台）', rank: '第三名', town: '竹山鎮', org: '環境清潔考核・村(里)、社區組', name: '南投縣竹山鎮竹山里', rep: '曾鈺琄 / 里長', multi: '', seatRow: 3, seatCol: 2, seatLabel: '左2區・第3排中' },
-  { id: 'c-14', cat: 'clean', batch: '第4批｜村里社區 1-5名（5名・後上台）', rank: '第四名', town: '仁愛鄉', org: '環境清潔考核・村(里)、社區組', name: '南投縣仁愛鄉大同村(幼獅道班)', rep: '謝戎彥 / 村長', multi: '同梯連領2獎(#1/#4)', seatRow: 2, seatCol: 2, seatLabel: '左2區・第2排中' },
-  { id: 'c-15', cat: 'clean', batch: '第4批｜村里社區 1-5名（5名・後上台）', rank: '第五名', town: '魚池鄉', org: '環境清潔考核・村(里)、社區組', name: '南投縣魚池鄉澀水社區發展協會', rep: '蘇吉正 / 理事長', multi: '', seatRow: 1, seatCol: 2, seatLabel: '左2區・第1排中(最前)' },
+  { id: 'c-11', cat: 'clean', batch: '第4批｜村里社區 1-5名（5名・後上台）', rank: '第一名', town: '仁愛鄉', org: '環境清潔考核・村(里)、社區組', name: '南投縣仁愛鄉大同村(壽亭新村)', rep: '謝戎彥 / 村長', multi: '同梯連領2獎(#1/#4)', seatRow: 3, seatCol: 5, seatLabel: '第3欄・清潔第3排第5格(靠下台)' },
+  { id: 'c-12', cat: 'clean', batch: '第4批｜村里社區 1-5名（5名・後上台）', rank: '第二名', town: '水里鄉', org: '環境清潔考核・村(里)、社區組', name: '南投縣水里鄉車埕村', rep: '陳美璇 / 職代', multi: '', seatRow: 3, seatCol: 4, seatLabel: '第3欄・清潔第3排第4格' },
+  { id: 'c-13', cat: 'clean', batch: '第4批｜村里社區 1-5名（5名・後上台）', rank: '第三名', town: '竹山鎮', org: '環境清潔考核・村(里)、社區組', name: '南投縣竹山鎮竹山里', rep: '曾鈺琄 / 里長', multi: '', seatRow: 3, seatCol: 3, seatLabel: '第3欄・清潔第3排第3格' },
+  { id: 'c-14', cat: 'clean', batch: '第4批｜村里社區 1-5名（5名・後上台）', rank: '第四名', town: '仁愛鄉', org: '環境清潔考核・村(里)、社區組', name: '南投縣仁愛鄉大同村(幼獅道班)', rep: '謝戎彥 / 村長', multi: '同梯連領2獎(#1/#4)', seatRow: 3, seatCol: 2, seatLabel: '第3欄・清潔第3排第2格' },
+  { id: 'c-15', cat: 'clean', batch: '第4批｜村里社區 1-5名（5名・後上台）', rank: '第五名', town: '魚池鄉', org: '環境清潔考核・村(里)、社區組', name: '南投縣魚池鄉澀水社區發展協會', rep: '蘇吉正 / 理事長', multi: '', seatRow: 3, seatCol: 1, seatLabel: '第3欄・清潔第3排第1格(靠上台)' },
 
-  // === 3. 民間綠色採購 (16席 - 左2區清潔後方 5欄×4排) ===
-  { id: 'g-1',     cat: 'green', batch: '第1批｜申報超過100萬（前8名）', rank: '績優', town: '', org: '114年民間綠色採購績優單位', name: '信織實業股份有限公司', rep: '葉光哲 / 經理', multi: '', seatRow: 1, seatCol: 1, seatLabel: '左2區・綠採第1排第1格(最前左)' },
-  { id: 'g-3',     cat: 'green', batch: '第1批｜申報超過100萬（前8名）', rank: '績優', town: '', org: '114年民間綠色採購績優單位', name: '塔里星室內裝修工程有限公司', rep: '盧政憶 / 負責人', multi: '', seatRow: 1, seatCol: 2, seatLabel: '左2區・綠採第1排第2格' },
-  { id: 'g-4',     cat: 'green', batch: '第1批｜申報超過100萬（前8名）', rank: '績優', town: '', org: '114年民間綠色採購績優單位', name: '双邦實業股份有限公司', rep: '何冠億 / 專員', multi: '', seatRow: 1, seatCol: 3, seatLabel: '左2區・綠採第1排第3格' },
-  { id: 'g-5',     cat: 'green', batch: '第1批｜申報超過100萬（前8名）', rank: '績優', town: '', org: '114年民間綠色採購績優單位', name: '茂順密封元件科技股份有限公司', rep: '施澍澤 / 經理', multi: '', seatRow: 1, seatCol: 4, seatLabel: '左2區・綠採第1排第4格' },
-  { id: 'g-6',     cat: 'green', batch: '第1批｜申報超過100萬（前8名）', rank: '績優', town: '', org: '114年民間綠色採購績優單位', name: '治鼎科技營造股份有限公司', rep: '劉謹銘 / 董事長', multi: '', seatRow: 1, seatCol: 5, seatLabel: '左2區・綠採第1排第5格(最前右)' },
-  { id: 'g-new-1', cat: 'green', batch: '第1批｜申報超過100萬（前8名）', rank: '績優', town: '', org: '114年民間綠色採購績優單位', name: '大有電器行', rep: '現場代表', multi: '', seatRow: 2, seatCol: 1, seatLabel: '左2區・綠採第2排第1格(靠上台)' },
-  { id: 'g-7',     cat: 'green', batch: '第1批｜申報超過100萬（前8名）', rank: '績優', town: '', org: '114年民間綠色採購績優單位', name: '祥峰電器行', rep: '游梨貞 / 老闆娘', multi: '', seatRow: 2, seatCol: 2, seatLabel: '左2區・綠採第2排第2格' },
-  { id: 'g-8',     cat: 'green', batch: '第1批｜申報超過100萬（前8名）', rank: '績優', town: '', org: '114年民間綠色採購績優單位', name: '翌暘工程顧問有限公司', rep: '張旻潔 / 計畫經理', multi: '', seatRow: 2, seatCol: 3, seatLabel: '左2區・綠採第2排第3格' },
+  // === 3. 民間綠色採購 (15席 - 第2欄[左中]公廁後方 5欄×3排) ===
+  { id: 'g-1',  cat: 'green', batch: '第1批｜申報超過100萬（前8名）', rank: '績優', town: '', org: '114年民間綠色採購績優單位', name: '信織實業股份有限公司', rep: '葉光哲 / 經理', multi: '', seatRow: 1, seatCol: 1, seatLabel: '第2欄・綠採第1排第1格(靠上台)' },
+  { id: 'g-2',  cat: 'green', batch: '第1批｜申報超過100萬（前8名）', rank: '績優', town: '草屯鎮', org: '114年民間綠色採購績優單位', name: '南開科技大學', rep: '趙苡晟 / 專案助理', multi: '兼領室內空品', seatRow: 1, seatCol: 2, seatLabel: '第2欄・綠採第1排第2格' },
+  { id: 'g-3',  cat: 'green', batch: '第1批｜申報超過100萬（前8名）', rank: '績優', town: '', org: '114年民間綠色採購績優單位', name: '塔里星室內裝修工程有限公司', rep: '盧政憶 / 負責人', multi: '', seatRow: 1, seatCol: 3, seatLabel: '第2欄・綠採第1排第3格' },
+  { id: 'g-4',  cat: 'green', batch: '第1批｜申報超過100萬（前8名）', rank: '績優', town: '', org: '114年民間綠色採購績優單位', name: '双邦實業股份有限公司', rep: '何冠億 / 專員', multi: '', seatRow: 1, seatCol: 4, seatLabel: '第2欄・綠採第1排第4格' },
+  { id: 'g-5',  cat: 'green', batch: '第1批｜申報超過100萬（前8名）', rank: '績優', town: '', org: '114年民間綠色採購績優單位', name: '茂順密封元件科技股份有限公司', rep: '施澍澤 / 經理', multi: '', seatRow: 1, seatCol: 5, seatLabel: '第2欄・綠採第1排第5格(靠下台)' },
+  { id: 'g-6',  cat: 'green', batch: '第1批｜申報超過100萬（前8名）', rank: '績優', town: '', org: '114年民間綠色採購績優單位', name: '治鼎科技營造股份有限公司', rep: '劉謹銘 / 董事長', multi: '', seatRow: 2, seatCol: 1, seatLabel: '第2欄・綠採第2排第1格(靠上台)' },
+  { id: 'g-7',  cat: 'green', batch: '第1批｜申報超過100萬（前8名）', rank: '績優', town: '', org: '114年民間綠色採購績優單位', name: '祥峰電器行', rep: '游梨貞 / 老闆娘', multi: '', seatRow: 2, seatCol: 2, seatLabel: '第2欄・綠採第2排第2格' },
+  { id: 'g-8',  cat: 'green', batch: '第1批｜申報超過100萬（前8名）', rank: '績優', town: '', org: '114年民間綠色採購績優單位', name: '翌暘工程顧問有限公司', rep: '張旻潔 / 計畫經理', multi: '', seatRow: 2, seatCol: 3, seatLabel: '第2欄・綠採第2排第3格' },
 
-  { id: 'g-9',     cat: 'green', batch: '第2批｜申報超過100萬（後8名）', rank: '績優', town: '', org: '114年民間綠色採購績優單位', name: '雲品國際酒店股份有限公司日月潭分公司', rep: '張喬雯 / 採購部資深副理', multi: '', seatRow: 2, seatCol: 4, seatLabel: '左2區・綠採第2排第4格' },
-  { id: 'g-10',    cat: 'green', batch: '第2批｜申報超過100萬（後8名）', rank: '績優', town: '', org: '114年民間綠色採購績優單位', name: '福杉國際旅館管理顧問股份有限公司', rep: '曾雅琪 / 經理', multi: '', seatRow: 2, seatCol: 5, seatLabel: '左2區・綠採第2排第5格' },
-  { id: 'g-11',    cat: 'green', batch: '第2批｜申報超過100萬（後8名）', rank: '績優', town: '', org: '114年民間綠色採購績優單位', name: '三原電器行', rep: '陳韋助 / 老闆', multi: '', seatRow: 3, seatCol: 1, seatLabel: '左2區・綠採第3排第1格(靠上台)' },
-  { id: 'g-12',    cat: 'green', batch: '第2批｜申報超過100萬（後8名）', rank: '績優', town: '', org: '114年民間綠色採購績優單位', name: '杉林溪遊樂事業股份有限公司', rep: '李侑璘 / 工務部經理', multi: '兼領績優公廁', seatRow: 3, seatCol: 2, seatLabel: '左2區・綠採第3排第2格' },
-  { id: 'g-13',    cat: 'green', batch: '第2批｜申報超過100萬（後8名）', rank: '績優', town: '', org: '114年民間綠色採購績優單位', name: '佳信電器行', rep: '黃志宏 / 負責人', multi: '', seatRow: 3, seatCol: 3, seatLabel: '左2區・綠採第3排第3格' },
-  { id: 'g-14',    cat: 'green', batch: '第2批｜申報超過100萬（後8名）', rank: '績優', town: '', org: '114年民間綠色採購績優單位', name: '佑民醫療社團法人佑民醫院', rep: '林翠紅 / 行政部副部長', multi: '', seatRow: 3, seatCol: 4, seatLabel: '左2區・綠採第3排第4格' },
-  { id: 'g-15',    cat: 'green', batch: '第2批｜申報超過100萬（後8名）', rank: '績優', town: '', org: '114年民間綠色採購績優單位', name: '埔基醫療財團法人埔里基督教醫院', rep: '楊崇欣 / 主任', multi: '', seatRow: 3, seatCol: 5, seatLabel: '左2區・綠採第3排第5格' },
-  { id: 'g-new-2', cat: 'green', batch: '第2批｜申報超過100萬（後8名）', rank: '績優', town: '', org: '114年民間綠色採購績優單位', name: '總福營造有限公司', rep: '現場代表', multi: '', seatRow: 4, seatCol: 5, seatLabel: '左2區・綠採第4排第5格(最後右)' },
+  { id: 'g-9',  cat: 'green', batch: '第2批｜申報超過100萬（後7名）', rank: '績優', town: '', org: '114年民間綠色採購績優單位', name: '雲品國際酒店股份有限公司日月潭分公司', rep: '張喬雯 / 採購部資深副理', multi: '', seatRow: 2, seatCol: 4, seatLabel: '第2欄・綠採第2排第4格' },
+  { id: 'g-10', cat: 'green', batch: '第2批｜申報超過100萬（後7名）', rank: '績優', town: '', org: '114年民間綠色採購績優單位', name: '福杉國際旅館管理顧問股份有限公司', rep: '曾雅琪 / 經理', multi: '', seatRow: 2, seatCol: 5, seatLabel: '第2欄・綠採第2排第5格(靠下台)' },
+  { id: 'g-11', cat: 'green', batch: '第2批｜申報超過100萬（後7名）', rank: '績優', town: '', org: '114年民間綠色採購績優單位', name: '三原電器行', rep: '陳韋助 / 老闆', multi: '', seatRow: 3, seatCol: 1, seatLabel: '第2欄・綠採第3排第1格(靠上台)' },
+  { id: 'g-12', cat: 'green', batch: '第2批｜申報超過100萬（後7名）', rank: '績優', town: '', org: '114年民間綠色採購績優單位', name: '杉林溪遊樂事業股份有限公司', rep: '李侑璘 / 工務部經理', multi: '兼領績優公廁', seatRow: 3, seatCol: 2, seatLabel: '第2欄・綠採第3排第2格' },
+  { id: 'g-13', cat: 'green', batch: '第2批｜申報超過100萬（後7名）', rank: '績優', town: '', org: '114年民間綠色採購績優單位', name: '佳信電器行', rep: '黃志宏 / 負責人', multi: '', seatRow: 3, seatCol: 3, seatLabel: '第2欄・綠採第3排第3格' },
+  { id: 'g-14', cat: 'green', batch: '第2批｜申報超過100萬（後7名）', rank: '績優', town: '', org: '114年民間綠色採購績優單位', name: '佑民醫療社團法人佑民醫院', rep: '林翠紅 / 行政部副部長', multi: '', seatRow: 3, seatCol: 4, seatLabel: '第2欄・綠採第3排第4格' },
+  { id: 'g-15', cat: 'green', batch: '第2批｜申報超過100萬（後7名）', rank: '績優', town: '', org: '114年民間綠色採購績優單位', name: '埔基醫療財團法人埔里基督教醫院', rep: '楊崇欣 / 主任', multi: '', seatRow: 3, seatCol: 5, seatLabel: '第2欄・綠採第3排第5格(靠下台)' },
 
-  // === 4. 優良機車排氣檢驗站 (10席 - 左1區公廁後方 2欄×5排) ===
-  { id: 'm-1',  cat: 'moto', batch: '第1批｜第一～三名（3名）', rank: '第一名', town: '竹山鎮', org: '優良機車排氣檢驗站', name: '竹山鎮明昇機車行', rep: '張信法 / 老闆', multi: '', seatRow: 5, seatCol: 1, seatLabel: '左1區・排氣第5排左(最後)' },
-  { id: 'm-2',  cat: 'moto', batch: '第1批｜第一～三名（3名）', rank: '第二名', town: '埔里鎮', org: '優良機車排氣檢驗站', name: '埔里鎮光隆車業', rep: '蔡旭洲 / 老闆', multi: '', seatRow: 4, seatCol: 1, seatLabel: '左1區・排氣第4排左(靠上台)' },
-  { id: 'm-3',  cat: 'moto', batch: '第1批｜第一～三名（3名）', rank: '第三名', town: '竹山鎮', org: '優良機車排氣檢驗站', name: '竹山鎮信誼機車行', rep: '曾昱綸 / 小老闆', multi: '', seatRow: 3, seatCol: 1, seatLabel: '左1區・排氣第3排左(靠上台)' },
+  // === 4. 優良機車排氣檢驗站 (10席 - 第2欄[左中]綠採後方 5欄×2排) ===
+  { id: 'm-1',  cat: 'moto', batch: '第1批｜第一～三名（3名）', rank: '第一名', town: '竹山鎮', org: '優良機車排氣檢驗站', name: '竹山鎮明昇機車行', rep: '張信法 / 老闆', multi: '', seatRow: 1, seatCol: 3, seatLabel: '第2欄・排氣第1排第3格' },
+  { id: 'm-2',  cat: 'moto', batch: '第1批｜第一～三名（3名）', rank: '第二名', town: '埔里鎮', org: '優良機車排氣檢驗站', name: '埔里鎮光隆車業', rep: '蔡旭洲 / 老闆', multi: '', seatRow: 1, seatCol: 2, seatLabel: '第2欄・排氣第1排第2格' },
+  { id: 'm-3',  cat: 'moto', batch: '第1批｜第一～三名（3名）', rank: '第三名', town: '竹山鎮', org: '優良機車排氣檢驗站', name: '竹山鎮信誼機車行', rep: '曾昱綸 / 小老闆', multi: '', seatRow: 1, seatCol: 1, seatLabel: '第2欄・排氣第1排第1格(靠上台)' },
 
-  { id: 'm-4',  cat: 'moto', batch: '第2批｜簡訊收集績優獎（2名）', rank: '簡訊績優', town: '國姓鄉', org: '簡訊收集績優獎', name: '國姓鄉長興機車行', rep: '何俊賢 / 老闆', multi: '', seatRow: 2, seatCol: 1, seatLabel: '左1區・排氣第2排左(靠上台)' },
-  { id: 'm-5',  cat: 'moto', batch: '第2批｜簡訊收集績優獎（2名）', rank: '簡訊績優', town: '埔里鎮', org: '簡訊收集績優獎', name: '埔里鎮東岳機車行', rep: '王昱人 / 老闆', multi: '', seatRow: 1, seatCol: 1, seatLabel: '左1區・排氣第1排左(最前)' },
+  { id: 'm-4',  cat: 'moto', batch: '第2批｜簡訊收集績優獎（2名）', rank: '簡訊績優', town: '國姓鄉', org: '簡訊收集績優獎', name: '國姓鄉長興機車行', rep: '何俊賢 / 老闆', multi: '', seatRow: 1, seatCol: 4, seatLabel: '第2欄・排氣第1排第4格' },
+  { id: 'm-5',  cat: 'moto', batch: '第2批｜簡訊收集績優獎（2名）', rank: '簡訊績優', town: '埔里鎮', org: '簡訊收集績優獎', name: '埔里鎮東岳機車行', rep: '王昱人 / 老闆', multi: '', seatRow: 1, seatCol: 5, seatLabel: '第2欄・排氣第1排第5格(靠下台)' },
 
-  { id: 'm-6',  cat: 'moto', batch: '第3批｜年度定檢率提升績優獎（5名）', rank: '定檢提升', town: '埔里鎮', org: '年度定檢率提升績優獎', name: '埔里鎮百盛機車行', rep: '游景化 / 老闆', multi: '', seatRow: 5, seatCol: 2, seatLabel: '左1區・排氣第5排右(最後)' },
-  { id: 'm-7',  cat: 'moto', batch: '第3批｜年度定檢率提升績優獎（5名）', rank: '定檢提升', town: '埔里鎮', org: '年度定檢率提升績優獎', name: '埔里鎮永旺車業行', rep: '劉志永 / 老闆', multi: '', seatRow: 4, seatCol: 2, seatLabel: '左1區・排氣第4排右' },
-  { id: 'm-8',  cat: 'moto', batch: '第3批｜年度定檢率提升績優獎（5名）', rank: '定檢提升', town: '埔里鎮', org: '年度定檢率提升績優獎', name: '埔里鎮宏城機車行', rep: '陳佳宏 / 老闆', multi: '', seatRow: 3, seatCol: 2, seatLabel: '左1區・排氣第3排右' },
-  { id: 'm-9',  cat: 'moto', batch: '第3批｜年度定檢率提升績優獎（5名）', rank: '定檢提升', town: '南投市', org: '年度定檢率提升績優獎', name: '南投市勝美機車行', rep: '鄭偉志 / 老闆', multi: '', seatRow: 2, seatCol: 2, seatLabel: '左1區・排氣第2排右' },
-  { id: 'm-10', cat: 'moto', batch: '第3批｜年度定檢率提升績優獎（5名）', rank: '定檢提升', town: '草屯鎮', org: '年度定檢率提升績優獎', name: '草屯鎮明利車業', rep: '張芳秋 / 老闆', multi: '', seatRow: 1, seatCol: 2, seatLabel: '左1區・排氣第1排右(最前)' },
+  { id: 'm-6',  cat: 'moto', batch: '第3批｜年度定檢率提升績優獎（5名）', rank: '定檢提升', town: '埔里鎮', org: '年度定檢率提升績優獎', name: '埔里鎮百盛機車行', rep: '游景化 / 老闆', multi: '', seatRow: 2, seatCol: 1, seatLabel: '第2欄・排氣第2排第1格(靠上台)' },
+  { id: 'm-7',  cat: 'moto', batch: '第3批｜年度定檢率提升績優獎（5名）', rank: '定檢提升', town: '埔里鎮', org: '年度定檢率提升績優獎', name: '埔里鎮永旺車業行', rep: '劉志永 / 老闆', multi: '', seatRow: 2, seatCol: 2, seatLabel: '第2欄・排氣第2排第2格' },
+  { id: 'm-8',  cat: 'moto', batch: '第3批｜年度定檢率提升績優獎（5名）', rank: '定檢提升', town: '埔里鎮', org: '年度定檢率提升績優獎', name: '埔里鎮宏城機車行', rep: '陳佳宏 / 老闆', multi: '', seatRow: 2, seatCol: 3, seatLabel: '第2欄・排氣第2排第3格' },
+  { id: 'm-9',  cat: 'moto', batch: '第3批｜年度定檢率提升績優獎（5名）', rank: '定檢提升', town: '南投市', org: '年度定檢率提升績優獎', name: '南投市勝美機車行', rep: '鄭偉志 / 老闆', multi: '', seatRow: 2, seatCol: 4, seatLabel: '第2欄・排氣第2排第4格' },
+  { id: 'm-10', cat: 'moto', batch: '第3批｜年度定檢率提升績優獎（5名）', rank: '定檢提升', town: '草屯鎮', org: '年度定檢率提升績優獎', name: '草屯鎮明利車業', rep: '張芳秋 / 老闆', multi: '', seatRow: 2, seatCol: 5, seatLabel: '第2欄・排氣第2排第5格(靠下台)' },
 
-  // === 5. 室內空氣品質自主管理標章 (34席 - 右2區 7欄×5排) ===
-  // 第1批｜優良級（9名）
-  { id: 'q-1',     cat: 'iaq', batch: '第1批｜優良級（9名）', rank: '優良級', town: '', org: '室內空氣品質標章・優良級', name: '南投縣私立愛迪生幼兒園', rep: '主任或老師', multi: '', seatRow: 5, seatCol: 7, seatLabel: '右2區・第5排第7格(最後右)' },
-  { id: 'q-2',     cat: 'iaq', batch: '第1批｜優良級（9名）', rank: '優良級', town: '', org: '室內空氣品質標章・優良級', name: '南投縣私立聖愛幼兒園', rep: '主任或老師', multi: '', seatRow: 4, seatCol: 7, seatLabel: '右2區・第4排第7格' },
-  { id: 'q-3',     cat: 'iaq', batch: '第1批｜優良級（9名）', rank: '優良級', town: '信義鄉', org: '室內空氣品質標章・優良級', name: '信義鄉同富國小附設幼兒園', rep: '主任或老師', multi: '', seatRow: 3, seatCol: 7, seatLabel: '右2區・第3排第7格' },
-  { id: 'q-4',     cat: 'iaq', batch: '第1批｜優良級（9名）', rank: '優良級', town: '鹿谷鄉', org: '室內空氣品質標章・優良級', name: '鹿谷鄉文昌國小附設幼兒園', rep: '李岱恩 / 校長', multi: '', seatRow: 2, seatCol: 7, seatLabel: '右2區・第2排第7格' },
-  { id: 'q-5',     cat: 'iaq', batch: '第1批｜優良級（9名）', rank: '優良級', town: '', org: '室內空氣品質標章・優良級', name: '南投縣私立福祿貝爾幼兒園', rep: '潘家宜 / 園長', multi: '', seatRow: 5, seatCol: 6, seatLabel: '右2區・第5排第6格' },
-  { id: 'q-6',     cat: 'iaq', batch: '第1批｜優良級（9名）', rank: '優良級', town: '魚池鄉', org: '室內空氣品質標章・優良級', name: '魚池鄉魚池國小附設幼兒園', rep: '范美莉 / 主任', multi: '', seatRow: 4, seatCol: 6, seatLabel: '右2區・第4排第6格' },
-  { id: 'q-7',     cat: 'iaq', batch: '第1批｜優良級（9名）', rank: '優良級', town: '信義鄉', org: '室內空氣品質標章・優良級', name: '信義鄉地利國小附設幼兒園', rep: '全主任', multi: '', seatRow: 3, seatCol: 6, seatLabel: '右2區・第3排第6格' },
-  { id: 'q-8',     cat: 'iaq', batch: '第1批｜優良級（9名）', rank: '優良級', town: '', org: '室內空氣品質標章・優良級', name: '南投縣私立格林幼兒園', rep: '同事代表', multi: '', seatRow: 2, seatCol: 6, seatLabel: '右2區・第2排第6格' },
-  { id: 'q-new-1', cat: 'iaq', batch: '第1批｜優良級（9名）', rank: '優良級', town: '', org: '室內空氣品質標章・優良級', name: '光復國小附設幼兒園', rep: '現場代表', multi: '', seatRow: 1, seatCol: 6, seatLabel: '右2區・第1排第6格(最前)' },
+  // === 5. 室內空氣品質自主管理標章 (29席 - 第1欄[最左]貴賓後方 5欄×6排，第6排第5格空位) ===
+  // 第1批｜優良級（8名）
+  { id: 'q-1',  cat: 'iaq', batch: '第1批｜優良級（8名）', rank: '優良級', town: '', org: '室內空氣品質標章・優良級', name: '南投縣私立愛迪生幼兒園', rep: '主任或老師', multi: '', seatRow: 2, seatCol: 2, seatLabel: '第1欄・空品第2排第2格' },
+  { id: 'q-2',  cat: 'iaq', batch: '第1批｜優良級（8名）', rank: '優良級', town: '', org: '室內空氣品質標章・優良級', name: '南投縣私立聖愛幼兒園', rep: '主任或老師', multi: '', seatRow: 2, seatCol: 3, seatLabel: '第1欄・空品第2排第3格' },
+  { id: 'q-3',  cat: 'iaq', batch: '第1批｜優良級（8名）', rank: '優良級', town: '信義鄉', org: '室內空氣品質標章・優良級', name: '信義鄉同富國小附設幼兒園', rep: '主任或老師', multi: '', seatRow: 2, seatCol: 4, seatLabel: '第1欄・空品第2排第4格' },
+  { id: 'q-4',  cat: 'iaq', batch: '第1批｜優良級（8名）', rank: '優良級', town: '鹿谷鄉', org: '室內空氣品質標章・優良級', name: '鹿谷鄉文昌國小附設幼兒園', rep: '李岱恩 / 校長', multi: '', seatRow: 2, seatCol: 5, seatLabel: '第1欄・空品第2排第5格' },
+  { id: 'q-5',  cat: 'iaq', batch: '第1批｜優良級（8名）', rank: '優良級', town: '', org: '室內空氣品質標章・優良級', name: '南投縣私立福祿貝爾幼兒園', rep: '潘家宜 / 園長', multi: '', seatRow: 3, seatCol: 1, seatLabel: '第1欄・空品第3排第1格(靠上台)' },
+  { id: 'q-6',  cat: 'iaq', batch: '第1批｜優良級（8名）', rank: '優良級', town: '魚池鄉', org: '室內空氣品質標章・優良級', name: '魚池鄉魚池國小附設幼兒園', rep: '范美莉 / 主任', multi: '', seatRow: 3, seatCol: 2, seatLabel: '第1欄・空品第3排第2格' },
+  { id: 'q-7',  cat: 'iaq', batch: '第1批｜優良級（8名）', rank: '優良級', town: '信義鄉', org: '室內空氣品質標章・優良級', name: '信義鄉地利國小附設幼兒園', rep: '全主任', multi: '', seatRow: 3, seatCol: 3, seatLabel: '第1欄・空品第3排第3格' },
+  { id: 'q-8',  cat: 'iaq', batch: '第1批｜優良級（8名）', rank: '優良級', town: '', org: '室內空氣品質標章・優良級', name: '南投縣私立格林幼兒園', rep: '同事代表', multi: '', seatRow: 3, seatCol: 4, seatLabel: '第1欄・空品第3排第4格' },
 
-  // 第2批｜優良級（9名）
-  { id: 'q-9',     cat: 'iaq', batch: '第2批｜優良級（9名）', rank: '優良級', town: '埔里鎮', org: '室內空氣品質標章・優良級', name: '埔里鎮忠孝國小附設幼兒園', rep: '鐘森雄 / 校長', multi: '', seatRow: 1, seatCol: 5, seatLabel: '右2區・第1排第5格(最前)' },
-  { id: 'q-10',    cat: 'iaq', batch: '第2批｜優良級（9名）', rank: '優良級', town: '', org: '室內空氣品質標章・優良級', name: '南投縣私立育樂寶貝托嬰中心', rep: '廖偉琳 / 主任', multi: '', seatRow: 5, seatCol: 5, seatLabel: '右2區・第5排第5格' },
-  { id: 'q-11',    cat: 'iaq', batch: '第2批｜優良級（9名）', rank: '優良級', town: '', org: '室內空氣品質標章・優良級', name: '國防部全動署後備指揮部明德營區職場互助教保服務中心', rep: '行政人員代表', multi: '', seatRow: 4, seatCol: 5, seatLabel: '右2區・第4排第5格' },
-  { id: 'q-new-3', cat: 'iaq', batch: '第2批｜優良級（9名）', rank: '優良級', town: '埔里鎮', org: '室內空氣品質標章・優良級', name: '康達盛通生活事業-埔里分公司', rep: '現場代表', multi: '', seatRow: 3, seatCol: 5, seatLabel: '右2區・第3排第5格' },
-  { id: 'q-12',    cat: 'iaq', batch: '第2批｜優良級（9名）', rank: '優良級', town: '南投市', org: '室內空氣品質標章・優良級', name: '南投市新豐國小附設幼兒園', rep: '黃惠瑜 / 主任', multi: '', seatRow: 2, seatCol: 5, seatLabel: '右2區・第2排第5格' },
-  { id: 'q-13',    cat: 'iaq', batch: '第2批｜優良級（9名）', rank: '優良級', town: '', org: '室內空氣品質標章・優良級', name: '南投縣迦南精神護理之家', rep: '工作人員', multi: '', seatRow: 1, seatCol: 4, seatLabel: '右2區・第1排第4格(最前)' },
-  { id: 'q-14',    cat: 'iaq', batch: '第2批｜優良級（9名）', rank: '優良級', town: '埔里鎮', org: '室內空氣品質標章・優良級', name: '國立暨南國際大學', rep: '卓雨璇 / 小姐', multi: '', seatRow: 5, seatCol: 4, seatLabel: '右2區・第5排第4格' },
-  { id: 'q-15',    cat: 'iaq', batch: '第2批｜優良級（9名）', rank: '優良級', town: '埔里鎮', org: '室內空氣品質標章・優良級', name: '臺灣菸酒股份有限公司埔里酒廠', rep: '陳宏明 / 先生', multi: '', seatRow: 4, seatCol: 4, seatLabel: '右2區・第4排第4格' },
-  { id: 'q-new-5', cat: 'iaq', batch: '第2批｜優良級（9名）', rank: '優良級', town: '', org: '室內空氣品質標章・優良級', name: '柏克萊托嬰中心', rep: '現場代表', multi: '', seatRow: 3, seatCol: 4, seatLabel: '右2區・第3排第4格' },
+  // 第2批｜優良級（8名）
+  { id: 'q-9',  cat: 'iaq', batch: '第2批｜優良級（8名）', rank: '優良級', town: '埔里鎮', org: '室內空氣品質標章・優良級', name: '埔里鎮忠孝國小附設幼兒園', rep: '鐘森雄 / 校長', multi: '', seatRow: 3, seatCol: 5, seatLabel: '第1欄・空品第3排第5格' },
+  { id: 'q-10', cat: 'iaq', batch: '第2批｜優良級（8名）', rank: '優良級', town: '', org: '室內空氣品質標章・優良級', name: '南投縣私立育樂寶貝托嬰中心', rep: '廖偉琳 / 主任', multi: '', seatRow: 4, seatCol: 1, seatLabel: '第1欄・空品第4排第1格(靠上台)' },
+  { id: 'q-11', cat: 'iaq', batch: '第2批｜優良級（8名）', rank: '優良級', town: '', org: '室內空氣品質標章・優良級', name: '國防部全動署後備指揮部明德營區職場互助教保服務中心', rep: '行政人員代表', multi: '', seatRow: 4, seatCol: 2, seatLabel: '第1欄・空品第4排第2格' },
+  { id: 'q-12', cat: 'iaq', batch: '第2批｜優良級（8名）', rank: '優良級', town: '南投市', org: '室內空氣品質標章・優良級', name: '南投市新豐國小附設幼兒園', rep: '黃惠瑜 / 主任', multi: '', seatRow: 4, seatCol: 3, seatLabel: '第1欄・空品第4排第3格' },
+  { id: 'q-13', cat: 'iaq', batch: '第2批｜優良級（8名）', rank: '優良級', town: '', org: '室內空氣品質標章・優良級', name: '南投縣迦南精神護理之家', rep: '工作人員', multi: '', seatRow: 4, seatCol: 4, seatLabel: '第1欄・空品第4排第4格' },
+  { id: 'q-14', cat: 'iaq', batch: '第2批｜優良級（8名）', rank: '優良級', town: '埔里鎮', org: '室內空氣品質標章・優良級', name: '國立暨南國際大學', rep: '卓雨璇 / 小姐', multi: '', seatRow: 4, seatCol: 5, seatLabel: '第1欄・空品第4排第5格' },
+  { id: 'q-15', cat: 'iaq', batch: '第2批｜優良級（8名）', rank: '優良級', town: '埔里鎮', org: '室內空氣品質標章・優良級', name: '臺灣菸酒股份有限公司埔里酒廠', rep: '陳宏明 / 先生', multi: '', seatRow: 5, seatCol: 1, seatLabel: '第1欄・空品第5排第1格(靠上台)' },
+  { id: 'q-16', cat: 'iaq', batch: '第2批｜優良級（8名）', rank: '優良級', town: '', org: '室內空氣品質標章・優良級', name: '南投縣聖恩護理之家', rep: '林廣能 / 主任', multi: '', seatRow: 5, seatCol: 2, seatLabel: '第1欄・空品第5排第2格' },
 
-  // 第3批｜優良級（9名）
-  { id: 'q-16',    cat: 'iaq', batch: '第3批｜優良級（9名）', rank: '優良級', town: '', org: '室內空氣品質標章・優良級', name: '南投縣聖恩護理之家', rep: '林廣能 / 主任', multi: '', seatRow: 2, seatCol: 4, seatLabel: '右2區・第2排第4格' },
-  { id: 'q-17',    cat: 'iaq', batch: '第3批｜優良級（9名）', rank: '優良級', town: '南投市', org: '室內空氣品質標章・優良級', name: '南投縣政府文化局圖書館', rep: '許毓芳 / 科長', multi: '', seatRow: 1, seatCol: 3, seatLabel: '右2區・第1排第3格(最前)' },
-  { id: 'q-18',    cat: 'iaq', batch: '第3批｜優良級（9名）', rank: '優良級', town: '南投市', org: '室內空氣品質標章・優良級', name: '南投市漳和公辦民營托嬰中心', rep: '賴羽晴 / 理事長', multi: '連領3獎', seatRow: 5, seatCol: 3, seatLabel: '右2區・第5排第3格' },
-  { id: 'q-19',    cat: 'iaq', batch: '第3批｜優良級（9名）', rank: '優良級', town: '草屯鎮', org: '室內空氣品質標章・優良級', name: '青松長照社團法人附設南投縣私立草屯新豐住宿長照機構', rep: '陳亮勝 / 主任', multi: '', seatRow: 4, seatCol: 3, seatLabel: '右2區・第4排第3格' },
-  { id: 'q-20',    cat: 'iaq', batch: '第3批｜優良級（9名）', rank: '優良級', town: '埔里鎮', org: '室內空氣品質標章・優良級', name: '臺中榮民總醫院埔里分院', rep: '林祐儒 / 小姐', multi: '', seatRow: 3, seatCol: 3, seatLabel: '右2區・第3排第3格' },
-  { id: 'q-21',    cat: 'iaq', batch: '第3批｜優良級（9名）', rank: '優良級', town: '草屯鎮', org: '室內空氣品質標章・優良級', name: '南開科技大學', rep: '趙苡晟 / 專案助理', multi: '兼綠色採購代表', seatRow: 2, seatCol: 3, seatLabel: '右2區・第2排第3格' },
-  { id: 'q-new-2', cat: 'iaq', batch: '第3批｜優良級（9名）', rank: '優良級', town: '', org: '室內空氣品質標章・優良級', name: '私立康能護理之家', rep: '現場代表', multi: '', seatRow: 1, seatCol: 2, seatLabel: '右2區・第1排第2格(最前)' },
-  { id: 'q-22',    cat: 'iaq', batch: '第3批｜優良級（9名）', rank: '優良級', town: '埔里鎮', org: '室內空氣品質標章・優良級', name: '埔基醫療財團法人附設愛蘭護理之家', rep: '會再安排（週一追蹤）', multi: '', seatRow: 5, seatCol: 2, seatLabel: '右2區・第5排第2格' },
-  { id: 'q-23',    cat: 'iaq', batch: '第3批｜優良級（9名）', rank: '優良級', town: '', org: '室內空氣品質標章・優良級', name: '安泰長照社團法人附設南投縣私立朝日住宿長照機構', rep: '周銘彥', multi: '', seatRow: 4, seatCol: 2, seatLabel: '右2區・第4排第2格' },
+  // 第3批｜優良級（7名）
+  { id: 'q-17', cat: 'iaq', batch: '第3批｜優良級（7名）', rank: '優良級', town: '南投市', org: '室內空氣品質標章・優良級', name: '南投縣政府文化局圖書館', rep: '許毓芳 / 科長', multi: '', seatRow: 5, seatCol: 3, seatLabel: '第1欄・空品第5排第3格' },
+  { id: 'q-18', cat: 'iaq', batch: '第3批｜優良級（7名）', rank: '優良級', town: '南投市', org: '室內空氣品質標章・優良級', name: '南投市漳和公辦民營托嬰中心', rep: '賴羽晴 / 理事長', multi: '連領3獎', seatRow: 5, seatCol: 4, seatLabel: '第1欄・空品第5排第4格' },
+  { id: 'q-19', cat: 'iaq', batch: '第3批｜優良級（7名）', rank: '優良級', town: '草屯鎮', org: '室內空氣品質標章・優良級', name: '青松長照社團法人附設南投縣私立草屯新豐住宿長照機構', rep: '陳亮勝 / 主任', multi: '', seatRow: 5, seatCol: 5, seatLabel: '第1欄・空品第5排第5格' },
+  { id: 'q-20', cat: 'iaq', batch: '第3批｜優良級（7名）', rank: '優良級', town: '埔里鎮', org: '室內空氣品質標章・優良級', name: '臺中榮民總醫院埔里分院', rep: '林祐儒 / 小姐', multi: '', seatRow: 6, seatCol: 1, seatLabel: '第1欄・空品第6排第1格(靠上台)' },
+  { id: 'q-21', cat: 'iaq', batch: '第3批｜優良級（7名）', rank: '優良級', town: '草屯鎮', org: '室內空氣品質標章・優良級', name: '南開科技大學', rep: '趙苡晟 / 專案助理', multi: '兼領綠色採購', seatRow: 6, seatCol: 2, seatLabel: '第1欄・空品第6排第2格' },
+  { id: 'q-22', cat: 'iaq', batch: '第3批｜優良級（7名）', rank: '優良級', town: '埔里鎮', org: '室內空氣品質標章・優良級', name: '埔基醫療財團法人附設愛蘭護理之家', rep: '會再安排（週一追蹤）', multi: '', seatRow: 6, seatCol: 3, seatLabel: '第1欄・空品第6排第3格' },
+  { id: 'q-23', cat: 'iaq', batch: '第3批｜優良級（7名）', rank: '優良級', town: '', org: '室內空氣品質標章・優良級', name: '安泰長照社團法人附設南投縣私立朝日住宿長照機構', rep: '周銘彥', multi: '', seatRow: 6, seatCol: 4, seatLabel: '第1欄・空品第6排第4格' },
 
-  // 第4批｜良好級（7名）
-  { id: 'q-24',    cat: 'iaq', batch: '第4批｜良好級（7名）', rank: '良好級', town: '草屯鎮', org: '室內空氣品質標章・良好級', name: '土城公辦民營托嬰中心', rep: '賴羽晴 / 理事長', multi: '連領3獎', seatRow: 2, seatCol: 2, seatLabel: '右2區・第2排第2格' },
-  { id: 'q-25',    cat: 'iaq', batch: '第4批｜良好級（7名）', rank: '良好級', town: '南投市', org: '室內空氣品質標章・良好級', name: '南投市公辦民營托嬰中心', rep: '賴羽晴 / 理事長', multi: '連領3獎', seatRow: 1, seatCol: 1, seatLabel: '右2區・第1排第1格(最前靠上台)' },
-  { id: 'q-26',    cat: 'iaq', batch: '第4批｜良好級（7名）', rank: '良好級', town: '', org: '室內空氣品質標章・良好級', name: '私立永安護理之家', rep: '代表出席', multi: '', seatRow: 5, seatCol: 1, seatLabel: '右2區・第5排第1格(最後靠上台)' },
-  { id: 'q-27',    cat: 'iaq', batch: '第4批｜良好級（7名）', rank: '良好級', town: '草屯鎮', org: '室內空氣品質標章・良好級', name: '青松長照社團法人附設南投縣私立草屯青松住宿長照機構', rep: '林辰叡 / 主任', multi: '', seatRow: 4, seatCol: 1, seatLabel: '右2區・第4排第1格(靠上台)' },
-  { id: 'q-28',    cat: 'iaq', batch: '第4批｜良好級（7名）', rank: '良好級', town: '', org: '室內空氣品質標章・良好級', name: '南投縣私立博愛護理之家', rep: '謝小姐 / 行政代表', multi: '', seatRow: 3, seatCol: 1, seatLabel: '右2區・第3排第1格(靠上台)' },
-  { id: 'q-new-4', cat: 'iaq', batch: '第4批｜良好級（7名）', rank: '良好級', town: '', org: '室內空氣品質標章・良好級', name: '新南投弘明幼兒園', rep: '現場代表', multi: '', seatRow: 3, seatCol: 2, seatLabel: '右2區・第3排第2格' },
-  { id: 'q-29',    cat: 'iaq', batch: '第4批｜良好級（7名）', rank: '良好級', town: '', org: '室內空氣品質標章・良好級', name: '財團法人利河伯社會福利基金會附設台灣省私立基督仁愛之家', rep: '陳喜信 / 總務', multi: '', seatRow: 2, seatCol: 1, seatLabel: '右2區・第2排第1格(靠上台)' }
+  // 第4批｜良好級（6名）
+  { id: 'q-24', cat: 'iaq', batch: '第4批｜良好級（6名）', rank: '良好級', town: '草屯鎮', org: '室內空氣品質標章・良好級', name: '土城公辦民營托嬰中心', rep: '賴羽晴 / 理事長', multi: '連領3獎', seatRow: 1, seatCol: 1, seatLabel: '第1欄・空品第1排第1格(最前靠上台)' },
+  { id: 'q-25', cat: 'iaq', batch: '第4批｜良好級（6名）', rank: '良好級', town: '南投市', org: '室內空氣品質標章・良好級', name: '南投市公辦民營托嬰中心', rep: '賴羽晴 / 理事長', multi: '連領3獎', seatRow: 1, seatCol: 2, seatLabel: '第1欄・空品第1排第2格(最前)' },
+  { id: 'q-26', cat: 'iaq', batch: '第4批｜良好級（6名）', rank: '良好級', town: '', org: '室內空氣品質標章・良好級', name: '私立永安護理之家', rep: '代表出席', multi: '', seatRow: 1, seatCol: 3, seatLabel: '第1欄・空品第1排第3格(最前)' },
+  { id: 'q-27', cat: 'iaq', batch: '第4批｜良好級（6名）', rank: '良好級', town: '草屯鎮', org: '室內空氣品質標章・良好級', name: '青松長照社團法人附設南投縣私立草屯青松住宿長照機構', rep: '林辰叡 / 主任', multi: '', seatRow: 1, seatCol: 4, seatLabel: '第1欄・空品第1排第4格(最前)' },
+  { id: 'q-28', cat: 'iaq', batch: '第4批｜良好級（6名）', rank: '良好級', town: '', org: '室內空氣品質標章・良好級', name: '南投縣私立博愛護理之家', rep: '謝小姐 / 行政代表', multi: '', seatRow: 1, seatCol: 5, seatLabel: '第1欄・空品第1排第5格(最前)' },
+  { id: 'q-29', cat: 'iaq', batch: '第4批｜良好級（6名）', rank: '良好級', town: '', org: '室內空氣品質標章・良好級', name: '財團法人利河伯社會福利基金會附設台灣省私立基督仁愛之家', rep: '陳喜信 / 總務', multi: '', seatRow: 2, seatCol: 1, seatLabel: '第1欄・空品第2排第1格(靠上台)' }
 ];
 
 const DEFAULT_UNIT_MAP = Object.fromEntries(DEFAULT_UNITS.map(u => [u.id, u]));
@@ -1864,7 +1933,7 @@ const TIMELINE = [
  * 2. 狀態管理與 Google 試算表原子同步引擎
  * ============================================================================
  */
-const STORAGE_KEY = 'nantou_eco_award_115_v7';
+const STORAGE_KEY = 'nantou_eco_award_115_v8';
 const GAS_URL_KEY = 'nantou_eco_award_115_gas_url';
 const DEFAULT_GAS_URL = 'https://script.google.com/macros/s/AKfycbwkntJgqPBDLE_eJ50wzzi8PqTcYelMT2Xt91nQSlOEXmmi8--kwzgKA5Ew0qRhAR8p/exec';
 
@@ -2052,10 +2121,11 @@ async function pullFromGoogleSheet() {
       };
     });
 
-    // 若雲端試算表尚未對齊最新 84 席座位表名單，自動保留既有簽到狀態並升級至 84 席
+    // 若雲端試算表尚未對齊最新 78 席實體座位表名單，自動保留既有簽到狀態並升級至 78 席
     const needsSeatingSync = nextUnits.length !== DEFAULT_UNITS.length ||
-      !nextUnits.some(u => u.id === 'g-new-1') ||
-      !nextUnits.some(u => u.id === 'q-new-1');
+      !nextUnits.some(u => u.id === 't-jiji') ||
+      !nextUnits.some(u => u.id === 'g-2') ||
+      nextUnits.some(u => u.id === 't-9' || u.id === 'g-new-1' || u.id === 'q-new-1');
 
     if (needsSeatingSync) {
       const statusCache = Object.fromEntries(nextUnits.map(u => [u.id, u]));
@@ -2276,9 +2346,16 @@ async function batchAdvanceUnits(evt, catId, batchName, targetStatus) {
     targetStatus === 'stage' ? '#FACC15' : '#4ADE80'
   );
 
-  // 依序寫入 Google 試算表，確保 LockService 穩定處理每筆更新
-  for (const u of targets) {
-    await postToGas({ action: 'updateUnit', id: u.id, patch: { status: targetStatus } });
+  // 優先使用整批原子更新 API，若後端尚未更新則自動降級逐筆寫入
+  const batchRes = await postToGas({
+    action: 'batchUpdateUnits',
+    ids: targets.map(u => u.id),
+    patch: { status: targetStatus }
+  });
+  if (!batchRes || !batchRes.ok) {
+    for (const u of targets) {
+      await postToGas({ action: 'updateUnit', id: u.id, patch: { status: targetStatus } });
+    }
   }
 }
 
@@ -2416,7 +2493,7 @@ function openSeatModal(unitId) {
     }
   }
 
-  const minGridW = cat.cols >= 7 ? '540px' : (cat.cols >= 5 ? '420px' : '100%');
+  const minGridW = cat.cols >= 5 ? '420px' : '100%';
   document.getElementById('seatModalBody').innerHTML = `
     <div style="font-size:11px;color:#94A3B8;font-weight:800;margin-bottom:6px;display:flex;justify-content:space-between;">
       <span>⬆️ 廳內後方</span>
@@ -2444,7 +2521,7 @@ function closeSeatModal() {
 let fseatState = {
   filterCat: 'all',
   search: '',
-  birdEye: false,
+  birdEye: true,
   selectedId: null
 };
 
@@ -2464,8 +2541,11 @@ function toggleFseatZoom() {
   fseatState.birdEye = !fseatState.birdEye;
   const vp = document.getElementById('fseatViewport');
   const btn = document.getElementById('fseatZoomBtn');
+  const hint = document.getElementById('fseatLegendHint');
   if (vp) vp.classList.toggle('zoom-bird', fseatState.birdEye);
-  if (btn) btn.textContent = fseatState.birdEye ? '🔍 放大閱讀' : '🔭 鳥瞰全覽';
+  if (btn) btn.textContent = fseatState.birdEye ? '🔍 放大看字' : '🖥️ 一屏全覽';
+  if (hint) hint.textContent = fseatState.birdEye ? '👆 點任一格看詳情・右上可放大看字' : '👆 左右滑動查看大字・點右上縮回全圖';
+  renderDetailedSeatingChart();
 }
 
 function handleFseatSearch(val) {
@@ -2498,6 +2578,27 @@ function selectFseatUnit(unitId) {
   renderDetailedSeatingChart();
 }
 
+const MINI_SEAT_LABELS = {
+  't-1': '南投服務', 't-2': '車埕鐵道', 't-3': '向山遊客', 't-4': '中油埔里',
+  't-5': '伊達邵', 't-6': '朝霧碼頭', 't-7': '松柏嶺', 't-8': '杉林溪', 't-jiji': '集集公所',
+  'c-1': '草屯公所', 'c-2': '南投公所', 'c-3': '集集公所', 'c-4': '仁愛公所', 'c-5': '國姓公所',
+  'c-6': '草屯中山', 'c-7': '慈慧善行', 'c-8': '集集社區', 'c-9': '鹿谷竹林', 'c-10': '草屯玉峰',
+  'c-11': '壽亭新村', 'c-12': '水里車埕', 'c-13': '竹山里', 'c-14': '幼獅道班', 'c-15': '澀水社區',
+  'g-1': '信織實業', 'g-2': '南開科大', 'g-3': '塔里星', 'g-4': '双邦實業', 'g-5': '茂順密封',
+  'g-6': '治鼎科技', 'g-7': '祥峰電器', 'g-8': '翌暘工程', 'g-9': '雲品酒店', 'g-10': '福杉旅館',
+  'g-11': '三原電器', 'g-12': '杉林溪', 'g-13': '佳信電器', 'g-14': '佑民醫院', 'g-15': '埔里基醫',
+  'm-1': '明昇機車', 'm-2': '光隆車業', 'm-3': '信誼機車', 'm-4': '長興機車', 'm-5': '東岳機車',
+  'm-6': '百盛機車', 'm-7': '永旺車業', 'm-8': '宏城機車', 'm-9': '勝美機車', 'm-10': '明利車業',
+  'q-1': '愛迪生', 'q-2': '聖愛幼兒', 'q-3': '同富附幼', 'q-4': '文昌附幼',
+  'q-5': '福祿貝爾', 'q-6': '魚池附幼', 'q-7': '地利附幼', 'q-8': '格林幼兒',
+  'q-9': '忠孝附幼', 'q-10': '育樂寶貝', 'q-11': '明德教保', 'q-12': '新豐附幼',
+  'q-13': '迦南護理', 'q-14': '暨南大學', 'q-15': '埔里酒廠', 'q-16': '聖恩護理',
+  'q-17': '文化局圖', 'q-18': '漳和托嬰', 'q-19': '草屯新豐', 'q-20': '埔里榮院',
+  'q-21': '南開科大', 'q-22': '愛蘭護理', 'q-23': '朝日長照',
+  'q-24': '土城托嬰', 'q-25': '南投托嬰', 'q-26': '永安護理', 'q-27': '草屯青松',
+  'q-28': '博愛護理', 'q-29': '基督仁愛'
+};
+
 function renderZoneMatrixHtml(catId) {
   const cat = CATEGORIES[catId];
   const catUnits = appState.units.filter(u => u.cat === catId);
@@ -2510,23 +2611,26 @@ function renderZoneMatrixHtml(catId) {
     for (let c = 1; c <= cat.cols; c++) {
       const u = catUnits.find(x => x.seatRow === r && x.seatCol === c);
       if (!u) {
-        cells.push(`<div class="dseat-cell is-empty">空位</div>`);
+        cells.push(`<div class="dseat-cell is-empty">${fseatState.birdEye ? '' : '空位'}</div>`);
       } else {
         const isMatch = kw && [u.name, u.rep, u.town, u.rank, u.seatLabel].join(' ').toLowerCase().includes(kw);
         const isSel = fseatState.selectedId === u.id;
         const shortName = u.name
           .replace(/^南投縣/, '')
           .replace(/股份有限公司|醫療社團法人|醫療財團法人|社團法人/g, '');
+        const displayLabel = fseatState.birdEye ? (MINI_SEAT_LABELS[u.id] || shortName.slice(0, 4)) : shortName;
         const shortRep = (u.rep || '').split('/')[0].replace(/（.*?）/g, '').trim();
+        const catTintStyle = u.status === 'none' ? `style="border-color:${cat.color};"` : '';
 
         cells.push(`
           <div class="dseat-cell st-${u.status} ${isMatch ? 'is-match' : ''} ${isSel ? 'is-selected' : ''}"
+            ${catTintStyle}
             onclick="selectFseatUnit('${u.id}')">
             <div class="dseat-top">
               <span class="dseat-pos">${r}-${c}</span>
               <span class="dseat-rank">${u.rank}</span>
             </div>
-            <div class="dseat-name">${shortName}</div>
+            <div class="dseat-name">${displayLabel}</div>
             <div class="dseat-rep">${shortRep ? `👤${shortRep}` : ''}</div>
           </div>
         `);
@@ -2537,8 +2641,8 @@ function renderZoneMatrixHtml(catId) {
   return `
     <div class="zone-box ${isDimmed ? 'is-dimmed' : ''}" style="border-color:${cat.color};">
       <div class="zone-box-title" style="background:${cat.color};">
-        <span>${cat.icon} ${cat.name}（${cat.lead}）</span>
-        <span>就位 ${seatedCnt}/${catUnits.length}</span>
+        <span>${cat.icon} ${cat.name}${fseatState.birdEye ? '' : `（${cat.lead}）`}</span>
+        <span>${seatedCnt}/${catUnits.length}</span>
       </div>
       <div class="dseat-grid" style="--cols:${cat.cols};grid-template-columns: repeat(${cat.cols}, 102px);">
         ${cells.join('')}
@@ -2561,42 +2665,63 @@ function renderDetailedSeatingChart() {
 
   const canvas = document.getElementById('fseatCanvas');
   if (canvas) {
+    const b = fseatState.birdEye;
     canvas.innerHTML = `
-      <!-- 左1區 -->
+      <!-- 第1欄（最左・靠上台走道） -->
       <div class="hall-col">
-        <div class="hall-col-header">左1區（靠上台走道）</div>
-        <div class="static-hall-block" style="background:#334155;color:#F8FAFC;">📷 攝影組 預留區</div>
-        ${renderZoneMatrixHtml('moto')}
-        ${renderZoneMatrixHtml('toilet')}
-        <div class="static-hall-block" style="background:#F472B6;color:#090E14;cursor:pointer;" onclick="closeVenueModal();quickSwitchRole('vip')">
-          👑 長官、貴賓保留席（最前排）
+        <div class="hall-col-header">${b ? '第1欄(上台側)' : '第1欄（最左・靠上台走道）'}</div>
+        <div class="static-hall-block" style="background:#334155;color:#CBD5E1;">
+          ${b ? '📷 攝影組(6排)' : '📷 攝影組（後6排・30席）'}
+        </div>
+        ${renderZoneMatrixHtml('iaq')}
+        <div class="static-hall-block" style="background:#FACC15;color:#090E14;cursor:pointer;" onclick="closeVenueModal();quickSwitchRole('vip')">
+          ${b ? '👑 貴賓席(13)' : '👑 長官、貴賓保留席（前3排・13席）'}
         </div>
       </div>
 
       <div class="hall-aisle">走道</div>
 
-      <!-- 左2區 -->
+      <!-- 第2欄（左中欄） -->
       <div class="hall-col">
-        <div class="hall-col-header">左2區（中央偏左）</div>
+        <div class="hall-col-header">${b ? '第2欄(左中)' : '第2欄（左中欄）'}</div>
+        <div class="static-hall-block" style="background:#334155;color:#CBD5E1;">
+          ${b ? '📷 攝影組(5排)' : '📷 攝影組（後5排・25席）'}
+        </div>
+        ${renderZoneMatrixHtml('moto')}
         ${renderZoneMatrixHtml('green')}
-        ${renderZoneMatrixHtml('clean')}
+        ${renderZoneMatrixHtml('toilet')}
+        <div class="static-hall-block" style="background:#FACC15;color:#090E14;cursor:pointer;" onclick="closeVenueModal();quickSwitchRole('vip')">
+          ${b ? '👑 貴賓席(14)' : '👑 長官、貴賓保留席（前3排・14席）'}
+        </div>
       </div>
 
       <div class="hall-aisle">走道</div>
 
-      <!-- 右2區 -->
+      <!-- 第3欄（右中欄） -->
       <div class="hall-col">
-        <div class="hall-col-header">右2區（左1欄良好級・右6欄優良級）</div>
-        ${renderZoneMatrixHtml('iaq')}
+        <div class="hall-col-header">${b ? '第3欄(右中)' : '第3欄（右中欄）'}</div>
+        <div class="static-hall-block" style="background:#334155;color:#CBD5E1;">
+          ${b ? '📷 攝影組(5排)' : '📷 攝影組（後5排・25席）'}
+        </div>
+        <div class="static-hall-block" style="background:#78350F;color:#FEF3C7;flex:${b ? '1' : '0 0 auto'};display:flex;align-items:center;justify-content:center;">
+          ${b ? '👥 觀禮區(25)' : '👥 觀禮區（中5排・25席）'}
+        </div>
+        ${renderZoneMatrixHtml('clean')}
+        <div class="static-hall-block" style="background:#1E293B;color:#94A3B8;border-style:dashed;">
+          ${b ? '❎ 預留區(10)' : '❎ 預留區（前2排・10席）'}
+        </div>
       </div>
 
       <div class="hall-aisle">走道</div>
 
-      <!-- 右1區 -->
-      <div class="hall-col" style="min-width:110px;">
-        <div class="hall-col-header">右1區</div>
-        <div class="static-hall-block" style="flex:1;background:#334155;color:#CBD5E1;display:flex;align-items:center;justify-content:center;writing-mode:vertical-rl;letter-spacing:8px;font-size:15px;">
-          👥 觀禮區
+      <!-- 第4欄（最右・靠下台走道） -->
+      <div class="hall-col" style="${b ? '' : 'min-width:140px;'}">
+        <div class="hall-col-header">${b ? '第4欄(下台側)' : '第4欄（最右）'}</div>
+        <div class="static-hall-block" style="background:#334155;color:#CBD5E1;">
+          ${b ? '📷 攝影組(5排)' : '📷 攝影組（後5排・25席）'}
+        </div>
+        <div class="static-hall-block aud-right-col" style="flex:1;background:#78350F;color:#FEF3C7;display:flex;align-items:center;justify-content:center;writing-mode:vertical-rl;letter-spacing:6px;font-size:14px;">
+          ${b ? '👥 觀禮區(50席)' : '👥 觀禮區（前10排・50席）'}
         </div>
       </div>
     `;
